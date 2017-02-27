@@ -1,0 +1,8 @@
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/install/strip.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/install/local.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/install.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/list_install_components.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/edit_cache.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/rebuild_cache.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/replay.dir
+/home/odermy/Desktop/delivrables/icub-learning-trajectories/CppProgram/build/CMakeFiles/record.dir
