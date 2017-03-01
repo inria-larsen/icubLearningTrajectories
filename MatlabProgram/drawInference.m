@@ -6,10 +6,7 @@ set(0,'DefaultLineLinewidth',1)
 set(0,'DefaultAxesFontSize',12)
 
 %Plot the total trial and the data we have
-%nameFig = figure;
-
-%if you want to plot on the same plot than the learnt distribution.
-nameFig = figure%(trial + nbInput(1));
+nameFig = figure;
 
 for vff=1:nbInput(1)
     subplot(nbInput(1),1,vff);

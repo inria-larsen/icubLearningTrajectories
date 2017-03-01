@@ -7,12 +7,16 @@
  * 
  * To launch this program
  * 1. launch yarpserver
- * 2. launch gazebo
+ * 2. launch gazebo or the real robot
  * 2. launch iKinCartesianSolver --robot icubGazeboSim --part left_arm
  * 2. launch wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim (to have information about forces)
- * 4. launch the gravity compensator (to compensate gravity if you are on the real robot)
- * 2. launch proMPs.m on matlab 
+ * 4. real robot: launch the gravity compensator
+ * 2. launch demo_replayProMPs.m on matlab 
  * 3. launch this program.
+ * 4. connect the port by typing in a terminal:
+ * yarp connect /matlab/write /replay/read
+ * yarp connect /replay/read /matlab/write
+ * yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /replay/readForces
  */
 
 #include <cmath>
@@ -38,7 +42,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
-class Test: public RFModule
+class TestReplay: public RFModule
 {
 protected:
     // cartesian
@@ -71,14 +75,8 @@ protected:
 
 public:
  
-    Test(Network &yarp, int verbose = 1): RFModule()
+    TestReplay(int verbose = 1): RFModule()
     {
-	    port.open("/replay/read");  //communication with the matlab program.
-	    portForces.open("/replay/readForces");   // to read forces from the wholebodyDynamics program.
-	    yarp.connect("/matlab/write","/replay/read", "tcp");
-	    yarp.connect("/replay/read", "/matlab/write","tcp");
-	    yarp.connect("/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o","/replay/readForces", "tcp");
-
 	    verbositylevel = verbose; 
     }
     
@@ -99,6 +97,11 @@ public:
         fext.resize(6); // external forces received by WBDT
 		flagReturn=true; // flag to order the robot to come back in the initial position.
 		compliance = 1; // compliance's value ordered by the matlab program.
+		
+		//initialize ports
+		port.open("/replay/read");  //communication with the matlab program.
+	    portForces.open("/replay/readForces");   // to read forces from the wholebodyDynamics program.
+		
 		
         if (!initCartesian(part,1,1))
           return false;
@@ -130,7 +133,7 @@ public:
 		if(verbositylevel == 2) cout << "Before reading matlab information" << endl;
         Bottle *input = port.read();
         if(verbositylevel == 2) cout << "Before reading forces from WBDT." << endl;
-		Bottle *inputForces = portForces.read();
+		Bottle *inputForces = portForces.read(false);
 
         if (input!=NULL)  // Treatment only if it receives matlab order
         {
@@ -191,7 +194,6 @@ public:
 					client.setTrajectoryTime(3.0);
 					if(verbositylevel == 1) cout << "Rythme slow to begin the movement" << endl;
 					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
-					else cout << "if test ok" << endl;
 					client.goToPoseRobot(xd,od);
 					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
 					flagReturn = false;
@@ -241,8 +243,7 @@ int main(int argc,char *argv[])
     ResourceFinder rf;
     rf.configure(argc,argv);
 
-    Test test(yarp);    
-    int r=test.runModule(rf);  
+    TestReplay test;    
         
-    return r;
+    return test.runModule(rf);
 }
