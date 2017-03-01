@@ -10,7 +10,7 @@ clearvars;
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
-nbKindOfTraj =1;
+%nbKindOfTraj =1;
 z=100;
 nbInput(1) = 3; %input number used to the inference(here position)
 nbInput(2) = 6; %other inputs (here forces)
@@ -20,7 +20,7 @@ nbFunctions(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 accuracy = 0.00001;
-nbData = 30; ; %number of data with what you try to find the correct movement
+nbData = 30; %number of data with what you try to find the correct movement
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
 %some variable computation to create basis functions
@@ -56,15 +56,20 @@ t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
 %Compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
-promp{1} = computeDistributions2(t1, nbFunctions, z,center_gaussian,h);
+promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
 
-i = input(['Give the trajectory you want to replay (between 1 and ' num2str(size(promp,1)), ')']);
-
+i = size(promp,1)+1;
+while (i > size(promp,1) || i < 1)
+    i = input(['Give the trajectory you want to replay (between 1 and ' num2str(size(promp,1)), ')']);
+end
 %This function replays the trajectory into gazebo.
 replayProMP(i, promp{1}, connection,z);
 
-trial = input(['Give the trajectory you want to test (between 1 and ', num2str(nbKindOfTraj),')']);
-disp(['we try the number ', num2str(trial)])
+trial = size(promp,1)+1;
+while (trial > size(promp,1) || trial < 1)
+    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,1)),')']);
+end
+disp(['We try the number ', num2str(trial)])
 
 %creation of a variable test
 test.traj = promp{trial}.traj.y{3};
@@ -81,10 +86,10 @@ end
 replayObservedData(test,connection);
 
 %Recognition of the movement
-infTraj = inferencee(promp, test, nbFunctions, z, center_gaussian, h, nbData, accuracy);
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, accuracy);
 
 %replay the movement into gazebo
 continueMovement(infTraj,connection, test.nbData,z, promp{1}.PSI_z,list);
 
 %close the port and the program replay.
-finishConnection(connection);
+closeConnection(connection);

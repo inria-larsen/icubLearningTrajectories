@@ -10,7 +10,6 @@ for t = 1 : newTraj.nbData
          connection.b.addDouble(newTraj.trajM(t,i));   %val(t,i));
      end
     connection.port.write(connection.b);
-   disp('Have send the message.');
     connection.port.read(connection.c);
     disp(connection.c);
     num = str2num(connection.c);

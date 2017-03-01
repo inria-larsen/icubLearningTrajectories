@@ -33,6 +33,7 @@ set(0,'DefaultAxesFontSize',12);
          if(l==6)
               xlabel('Time [s]', 'fontsize', 24);
          end
+         set(gca, 'fontsize', 20)
     end
 
 %Here we plot the moments
@@ -47,6 +48,7 @@ set(0,'DefaultAxesFontSize',12);
          if(l==9)
               xlabel('Time [s]', 'fontsize', 24);
          end
+         set(gca, 'fontsize', 20)
     end
 
 
@@ -62,5 +64,6 @@ set(0,'DefaultAxesFontSize',12);
 %          if(l==sum(traj.nbInput))
 %               xlabel('Time [s]', 'fontsize', 24);
 %          end
+%       set(gca, 'fontsize', 20)
 %     end
 % end

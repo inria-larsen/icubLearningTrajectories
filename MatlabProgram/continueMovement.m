@@ -23,7 +23,6 @@ for t = round(inf.alpha*nbData): z
     connection.b.addDouble(compliance);
     
     connection.port.write(connection.b);
-    %disp('Have send the message.');
     connection.port.read(connection.c);
     num = str2num(connection.c);
     disp(['Receiving: forces = ', num2str(num(1,1)), ' ',num2str(num(1,2)),' ', num2str(num(1,3))]);
@@ -54,9 +53,8 @@ end
 %Send information about the end of the trajectory and verify it
 %receives it.
 connection.b.clear();
-connection.b.addDouble(0.0)
+connection.b.addDouble(0.0);
 connection.port.write(connection.b);
-display('writing 0.0');
 connection.port.read(connection.c);
 disp(connection.c);
 

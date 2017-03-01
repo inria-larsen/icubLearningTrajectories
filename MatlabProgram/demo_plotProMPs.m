@@ -7,10 +7,10 @@
 
 close all;
 clearvars;
-
+warning('off','MATLAB:colon:nonIntegerIndex')
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
-nbKindOfTraj =1;
+%nbKindOfTraj =1;
 z=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
@@ -50,12 +50,15 @@ promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
 %plot distribution
 drawDistribution(promp, list,z);
 
-trial = input(['Give the trajectory you want to test (between 1 and ', num2str(nbKindOfTraj),')']);
-disp(['we try the number ', num2str(trial)])
+trial = size(promp,1)+1;
+while (trial > size(promp,1) || trial < 1)
+    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,1)),')']);
+end
+disp(['We try the number ', num2str(trial)]);
 
 %creation of a trajectory test
 test.traj = promp{trial}.traj.y{3};
-test.trajM = promp{trial}.traj.yMat{3}
+test.trajM = promp{trial}.traj.yMat{3};
 test.totTime = promp{trial}.traj.totTime(3);
 test.alpha = z / test.totTime;
 test.partialTraj = [];
@@ -64,8 +67,6 @@ for i=1:sum(promp{trial}.traj.nbInput)
     test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
 end
 
-%begin to play the first nbFirstData
-replayObservedData(test,connection);
 
 %Recognition of the movement
 infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, accuracy);
@@ -73,9 +74,4 @@ infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, acc
 %draw the infered movement
 drawInference(promp,infTraj, test,z)
 
-%replay the movement into gazebo
-continueMovement(infTraj,connection, test.nbData,z, promp{1}.PSI_z,list);
-
-%close the port and the program replay.
-closeConnection(connection);
 

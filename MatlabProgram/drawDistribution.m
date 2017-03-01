@@ -4,7 +4,8 @@ function drawDistribution(promp, list,z)
 
 set(0,'DefaultLineLinewidth',1)
 set(0,'DefaultAxesFontSize',12)
-    fig = figure%(i+nbDof(1));
+
+    fig = figure;
  
     for vff=1:promp{1}.traj.nbInput(1)%nbDofTot
            subplot(promp{1}.traj.nbInput(1),1,vff);%size(nbDof,2),vff);
@@ -25,7 +26,7 @@ set(0,'DefaultAxesFontSize',12)
             
             fig = visualisationShared(promp{1}.PSI_z*promp{1}.mu_w, promp{1}.PSI_z*1.96*sqrt(diag(promp{1}.sigma_w )), sum(promp{1}.traj.nbInput), z,  vff, 'r', fig);
             fig = visualisation(promp{1}.PSI_z*promp{1}.mu_w, sum(promp{1}.traj.nbInput), z,  vff, 'r', fig);
-            set(gca, 'fontsize', 10);
+            set(gca, 'fontsize', 20);
             disG = size(fig,2);
             
             %un des tests
@@ -38,6 +39,7 @@ set(0,'DefaultAxesFontSize',12)
          if(vff==promp{1}.traj.nbInput(1))
               xlabel('iterations', 'fontsize', 24);
          end
+         set(gca, 'fontsize', 20);
     end
         legend(fig([disG,datG]), 'distribution learnt (mean & standart deviation)','observed data');
 end

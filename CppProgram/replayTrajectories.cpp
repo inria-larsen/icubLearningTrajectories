@@ -1,6 +1,6 @@
 
-/* Author Oriane Dermy
- * email:   oriane.dermy@inria.fr
+/* Author: Oriane Dermy
+ * email: oriane.dermy@inria.fr
  *
  * This program is used to replay trajectories send by the matlab program proMPs.m from the port /matlab/write.
  * To finish this project, this program could be ameliorated by changing the compliance of the robot's arm according to matlab information stocked in the variable "compliance".
@@ -47,6 +47,7 @@ protected:
     Vector od;
     Vector fext;
     string part;
+    string robot;
     
     //my data   
     BufferedPort<Bottle> port, portForces; // port to read matlab information and forces.
@@ -56,7 +57,7 @@ protected:
     int verbositylevel;
     
     //initialize cartesian controller
-    bool initCartesian(const string &robot, const string &part, bool swap_x=false,bool swap_y=false)
+    bool initCartesian(const string &part, bool swap_x=false,bool swap_y=false)
     {                        
         client.init(robot,part,swap_x,swap_y); 
         client.setPosePriority("position");
@@ -84,7 +85,7 @@ public:
     bool configure(ResourceFinder &rf)
     {    
 		string name=rf.check("name",Value("test_feedback")).asString().c_str();
-        string robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
+        robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
 		if(robot =="icubGazeboSim") trajTime = 0.1;
 		else trajTime = 0.5;
 		string part=rf.check("part",Value("left_arm")).asString().c_str();	
@@ -99,7 +100,7 @@ public:
 		flagReturn=true; // flag to order the robot to come back in the initial position.
 		compliance = 1; // compliance's value ordered by the matlab program.
 		
-        if (!initCartesian(robot,part,1,1))
+        if (!initCartesian(part,1,1))
           return false;
         return true;
        
@@ -126,14 +127,14 @@ public:
        Vector buttons,rpy;
        Vector x,o;    
 
-		if(verbositylevel == 1) cout << "Before reading matlab information" << endl;
+		if(verbositylevel == 2) cout << "Before reading matlab information" << endl;
         Bottle *input = port.read();
-        if(verbositylevel == 1) cout << "Before reading forces from WBDT." << endl;
+        if(verbositylevel == 2) cout << "Before reading forces from WBDT." << endl;
 		Bottle *inputForces = portForces.read();
 
         if (input!=NULL)  // Treatment only if it receives matlab order
         {
-            if(verbositylevel == 1) cout << "Got: " << input->toString().c_str() << endl;
+            if(verbositylevel == 2) cout << "Got: " << input->toString().c_str() << endl;
             
             // if we receive only one input, it requires specific treatment:
             if(input->size() == 1)
@@ -189,18 +190,17 @@ public:
 				{
 					client.setTrajectoryTime(3.0);
 					if(verbositylevel == 1) cout << "Rythme slow to begin the movement" << endl;
-					//Doesn't work with icubGazebo
-					//client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					else cout << "if test ok" << endl;
 					client.goToPoseRobot(xd,od);
-					//client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
+					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
 					flagReturn = false;
 				}else //When the robot has to move
 				{
 					client.setTrajectoryTime(trajTime);
-					//Doesn't work with icubGazebo
-					//client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od); // new target is xd,od
-					//client.waitMotionDone(0.04);
+					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);
 				}
 				
 				client.getRobotPose(x,o); // get current pose as x,o
@@ -210,7 +210,7 @@ public:
 			
 			yInfo("Current position = (%s)",x.toString(3,3).c_str());
 			yInfo("Target position = (%s)",xd.toString(3,3).c_str());
-			yInfo("Compliance      = (%f)",compliance);
+			yInfo("Compliance      = (%f)\n",compliance);
 			
 			//Give to matlab forces information
             Bottle& output = port.prepare();
@@ -221,7 +221,7 @@ public:
             output.addDouble(fext[3]);
             output.addDouble(fext[4]);
             output.addDouble(fext[5]);
-            if(verbositylevel == 1) cout << "It is writing: " << output.toString().c_str() << endl;
+            if(verbositylevel == 2) cout << "It is writing: " << output.toString().c_str() << endl;
             port.write();
         }    
         return true;
