@@ -1,12 +1,10 @@
 %This demo computes N proMPs given a set of recorded trajectories containing the demonstrations for the N types of movements. 
+%It plots the results.
 
 % by Oriane Dermy 07/09/2016
 % For any problem / remark / improvement, contact me:
 % oriane.dermy@gmail.com with subject [proMPs_toolbox]
 
-% by Oriane Dermy 07/09/2016
-% For any problem / remark / improvement, contact me:
-% oriane.dermy@gmail.com with subject [proMPs_toolbox]
 close all;
 clearvars;
 
@@ -19,8 +17,16 @@ nbInput(2) = 6; %other inputs (here forces and wrenches)
 
 nbFunctions(1) = 5; %number of basis functions
 nbFunctions(2) = 5; %number of basis functions for the second type of input (could require over forces).
-nbTotFunctions = 0;
 
+%variable tuned to achieve the trajectory correctly
+accuracy = 0.00001;
+nbData = 30; %number of data max with what you try to find the correct movement
+
+%%%%%%%%%%%%%% END VARIABLE CHOICE
+
+%some variable computation to create basis function, you might have to
+%change them
+nbTotFunctions = 0; 
 for i=1:size(nbFunctions,2)
     nbTotFunctions = nbTotFunctions + nbFunctions(i)*nbInput(i);
 end
@@ -28,12 +34,6 @@ center_gaussian(1) = 1.0 / (nbFunctions(1));
 center_gaussian(2) = 1.0 / (nbFunctions(2));
 h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
-%variable tuned to achieve the trajectory correctly
-accuracy = 0.00001;
-%%%%%%%%%%%%%% END VARIABLE CHOICE
-
-
-nbData = 30; %number of data max with what you try to find the correct movement
 
 %recover the data saved in the Data/trajX/recordY.txt files
 t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
@@ -46,7 +46,6 @@ drawRecoverData(t1, list);
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
 promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
-
 
 %plot distribution
 drawDistribution(promp, list,z);
