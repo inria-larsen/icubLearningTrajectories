@@ -10,7 +10,12 @@ This program is a subpart of the project "icub-learning-trajectories" composed o
 
 
 ## PRE-INSTALLATION:
-You need to have installed the geomagic touch, see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch
+You need to have installed:
+icub-main
+yarp
+gazebo
+WholeBodyDynamicsTree
+The geomagic touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 
 ## INSTALLATION:
 `cd CppProgram`   
@@ -24,16 +29,17 @@ You need to have installed the geomagic touch, see here: https://github.com/inri
 To launch this program that learn trajectories from the geomagic touch. You can use the world "worldPROMPS.sdf" to have some goal to achieve with the robot left arm. Open the code of this function to have more information about how to launch it.
 
 1. It requires to have installed the geomagic touch driver and  to have done all its setup (see pre-installation). Then, you have to launch:
-2. 1st terminal:
+2. yarpserver
+3. 1st terminal:
 yarprobotinterface --context geomagic --config geomagic.xml
-3. 2nd terminal:
+4. 2nd terminal:
 gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf
-4. 3d terminal: 
+5. 3d terminal: 
 wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim
-5. 4th terminal:
+6. 4th terminal:
 iKinCartesianSolver --robot icubGazeboSim --part left_arm (from the path where the .ini linked to gazebo are, if they are not well configured)
-6. 5th terminal:simCartesianControl --robot icubGazeboSim (from the path where the .ini linked to gazebo are) 
-7. Then, you can launch the program record (in CppProgram/build/bin)
+7. 5th terminal:simCartesianControl --robot icubGazeboSim (from the path where the .ini linked to gazebo are) 
+8. Then, you can launch the program record (in CppProgram/build/bin)
 
 Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and then launch the 3rd and 4th terminal from it. 
 

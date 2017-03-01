@@ -1,8 +1,8 @@
-%CLOSECONNECTION
-%this function closes the cpp replay program and close its port.
-b.clear();
-b.addDouble(-1);    
-port.write(b);
-port.close;
-%portForces.close;
-clear all;
+function closeConnection(connection)
+%finishConnection
+%this function closes the C++ program "replay" and close its port.
+connection.b.clear();
+connection.b.addDouble(-1);    
+connection.port.write(connection.b);
+connection.port.close;
+end
