@@ -9,6 +9,7 @@ close all;
 clearvars;
 warning('off','MATLAB:colon:nonIntegerIndex')
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
+nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
 z=100;
@@ -36,7 +37,7 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory('nameDataTrajectories', 'top', 'z', z, 'nbInput',nbInput);
 
 %plot recoverData
 drawRecoverData(t1, list);

@@ -41,7 +41,12 @@ wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim
 iKinCartesianSolver --robot icubGazeboSim --part left_arm (from the path where the .ini linked to gazebo are, if they are not well configured)
 7. 5th terminal:
 simCartesianControl --robot icubGazeboSim (from the path where the .ini linked to gazebo are) 
-8. Then, you can launch the program record (in CppProgram/build/bin)
+8. 6th terminal: in CppProgram/build/bin:
+./record
+9. 7th terminal: create the connection:
+yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
+
+Now you can use the launched program:
 When you press the black button of the geomagic, it will creates a file record0.txt. You can learn many trajectories (that will create other files as record1.txt, record2.txt and so on).
 
 Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and then launch the 3rd and 4th terminal from it. 

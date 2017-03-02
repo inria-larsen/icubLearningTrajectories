@@ -25,7 +25,7 @@
  * 6. launch demo_replayProMPs.m on matlab 
  * 7. launch this program.
  * 8. connect the port by typing in a terminal:
- * 	yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /ori_record/read
+ * 	yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
  */
 
 #include <cmath>
@@ -168,7 +168,7 @@ public:
         verbosity=rf.check("verbosity",Value(1)).asInt();
 		
 		cout << "verbosity: "<< verbosity<< endl;
-        port.open("/ori_record/read");  
+        port.open("/record/read");  
 
         flagRecord = 0; // precise if we are recording or not (if the button has been pressed or not).
         totalTraj = 0; //total number of trajectories

@@ -9,6 +9,7 @@ close all;
 clearvars;
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
+nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
 z=100;
@@ -51,7 +52,7 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory(nameDataTrajectories7 'top', 'z', z, 'nbInput',nbInput);
 
 %Compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
