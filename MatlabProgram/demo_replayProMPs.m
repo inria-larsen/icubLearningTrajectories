@@ -19,7 +19,7 @@ nbFunctions(1) = 5; %number of basis functions for the first type of input
 nbFunctions(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
-accuracy = 0.00001;
+expNoise = 0.00001;
 nbData = 30; %number of data with what you try to find the correct movement
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -86,7 +86,7 @@ end
 replayObservedData(test,connection);
 
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, accuracy);
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
 
 %replay the movement into gazebo
 continueMovement(infTraj,connection, test.nbData,z, promp{1}.PSI_z,list);

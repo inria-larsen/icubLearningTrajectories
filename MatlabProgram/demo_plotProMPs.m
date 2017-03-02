@@ -19,7 +19,7 @@ nbFunctions(1) = 5; %number of basis functions
 nbFunctions(2) = 5; %number of basis functions for the second type of input (could require over forces).
 
 %variable tuned to achieve the trajectory correctly
-accuracy = 0.00001;
+expNoise = 0.00001;
 nbData = 30; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
@@ -69,7 +69,7 @@ end
 
 
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, accuracy);
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
 
 %draw the infered movement
 drawInference(promp,infTraj, test,z)

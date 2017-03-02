@@ -1,4 +1,4 @@
-function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nbData, accuracy)
+function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nbData, expNoise)
 %INFERENCE
 %in this function, we recongize a movement from some initial data
 %and we complete it. We recognize and modify only the position information 
@@ -37,7 +37,7 @@ for i=1:nbKindOfTraj
     
     %we compute the learned distribution trajectory of cartesian position
     u{i} = PSI_coor{i}*mu_w_coord{i};
-    sigma{i} = PSI_coor{i}*sigma_w_coord{i}*PSI_coor{i}' + accuracy*eye(size(PSI_coor{i}*sigma_w_coord{i}*PSI_coor{i}'));
+    sigma{i} = PSI_coor{i}*sigma_w_coord{i}*PSI_coor{i}' + expNoise*eye(size(PSI_coor{i}*sigma_w_coord{i}*PSI_coor{i}'));
     
     %TODO change this part: from the initial movement it is more correct to
     %compare the distance than le likelihood 
@@ -85,7 +85,7 @@ mask = logical(mk);
 PSI_update = infTraj.PSI(mask,:);
 
 %distribution update
-K = sigma_new*PSI_update' * inv(accuracy*eye(size(PSI_update*sigma_new*PSI_update')) + PSI_update*sigma_new*PSI_update');
+K = sigma_new*PSI_update' * inv(expNoise*eye(size(PSI_update*sigma_new*PSI_update')) + PSI_update*sigma_new*PSI_update');
 mu_new = mu_new + K* (newTraj.partialTraj(1:nbData*nbInput(1),:) - PSI_update*mu_new);
 sigma_new = sigma_new - K*(PSI_update*sigma_new);
 
