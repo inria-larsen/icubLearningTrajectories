@@ -13,8 +13,19 @@
  * 
  * Another program allows to replay the movement we do, see README for more information. 
  * After that, if we press the white button, the robot will replay the movement. The geomagic touch arm robot will follow this movement.
-
+ *
+ * TO LAUNCH THIS PROGRAM:
  * 
+ * 1. launch yarpserver
+ * 1.b yarprobotinterface --context geomagic --config geomagic.xml
+ * 2. launch gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf 
+ * 3. launch wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim (if you want information about forces)
+ * 4. launch iKinCartesianSolver --robot icubGazeboSim --part left_arm
+ * 5. launch simCartesianControl --robot icubGazeboSim
+ * 6. launch demo_replayProMPs.m on matlab 
+ * 7. launch this program.
+ * 8. connect the port by typing in a terminal:
+ * 	yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /ori_record/read
  */
 
 #include <cmath>
@@ -142,11 +153,6 @@ protected:
 
 public:
  
-    Test(Network &yarp, int verbositylevel=2): RFModule()
-    {
-       port.open("/ori_record/read");  
-	   yarp.connect("/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o","/ori_record/read", "tcp");//, false); 
-    }
     
     bool configure(ResourceFinder &rf)
     {    
@@ -159,11 +165,14 @@ public:
         maxForce=fabs(rf.check("max-force-feedback",Value(1.5)).asDouble());
         bool swap_x=rf.check("swap_x",Value("false")).asBool();
         bool swap_y=rf.check("swap_y",Value("false")).asBool();
-                
-        // my initiate values
+        verbosity=rf.check("verbosity",Value(1)).asInt();
+		
+		cout << "verbosity: "<< verbosity<< endl;
+        port.open("/ori_record/read");  
+
         flagRecord = 0; // precise if we are recording or not (if the button has been pressed or not).
         totalTraj = 0; //total number of trajectories
-
+		
 		if (!initGeomagic(name,geomagic)) return false;
         
         if (!initCartesian(robot,part,1,1)) return false;
@@ -228,6 +237,7 @@ public:
 			cout << "Recording the " << totalTraj + 1 <<" trajectory ..." << endl;
 
 		}
+		
 		//Treatment of the end of a trajectory
 		else if((buttons[0] == 0.0) && (flagRecord == 1) && (totalIt > 5))
 		{
@@ -242,85 +252,47 @@ public:
 		if(flagRecord == 1)
 		{
 			totalIt++;
-			/*If you don't want to record forces delet these 6 lines*/
-			// read forces given by the wholeBodyDynamicsTree programm
-			Bottle *input = port.read();
-			if (input!=NULL) 
-			{
-				if(verbosity == 1) cout << "Read forces: " << input->toString().c_str() << endl;
-			}
-			else cout << "Read no forces." << endl;
 			
 			//read actual time
 			currentTime = Time::now();
 			
+			// read forces given by the wholeBodyDynamicsTree programm
+			Bottle *input = port.read(false);
+			if (input!=NULL) //record information with forces
+			{				
+				if(verbosity == 1) cout << "Read forces: " << input->toString().c_str() << endl;
+				record << currentTime - startTrajectory  <<" " 
+				<< x[0] << " " << x[1] << " " << x[2]  << " " 
+				<< input->get(0).asDouble() << " " << input->get(1).asDouble() << " " << input->get(2).asDouble() << " " 
+				<< input->get(3).asDouble() << " " << input->get(4).asDouble() << " " << input->get(5).asDouble() << " " 
+				<< xRobot[0] << " " << xRobot[1] << " " << xRobot[2] <<endl;
+			}
+			else //record information without forces
+			{ 
+				if(verbosity == 1) cout << "Warning, read no forces." << endl;
+				//record all the information into the file opened by record.
+				record << currentTime - startTrajectory  <<" " 
+				<< x[0] << " " << x[1] << " " << x[2]  << " " 
+				<< -1.0 << " " << -1.0 << " " << -1.0 << " " 
+				<< -1.0<< " " << -1.0 << " " << -1.0 << " " 
+				<< xRobot[0] << " " << xRobot[1] << " " << xRobot[2] <<endl;
+				
+			}
+
 			
-			//record all the information into the file opened by record.
-			record << currentTime - startTrajectory  <<" " 
-			<< x[0] << " " << x[1] << " " << x[2]  << " " 
-			<< input->get(0).asDouble() << " " << input->get(1).asDouble() << " " << input->get(2).asDouble() << " " 
-			<< input->get(3).asDouble() << " " << input->get(4).asDouble() << " " << input->get(5).asDouble() << " " 
-			<< xRobot[0] << " " << xRobot[1] << " " << xRobot[2] <<endl;
 			client.goToPose(xd,od); // new target is xd,od
-			//feedback=yarp::math::operator*(yarp::math::operator-(x,xd), 45.0);	
-			
-			// give no feed back
-			//feedback=yarp::math::operator*(x,0.0);	
-			//verifyFeedback();
-			//igeo->setFeedback(feedback);
+
+
 		}
 		
 		//if we don't record trajectory (no event)
 		else
 		{
-			
 			client.goToPose(xd,od); // the simulated robot goes where the end effector of the haptic device is
-			
 			//The simulated robot doesn't give any forces feedback to the geomagic.
 			feedback=yarp::math::operator*(x,0.0);
 			verifyFeedback();
 			igeo->setFeedback(feedback);
-			
-		/** if we want to force the icub and the geomagic to take the origin position do:.
-		 * //we force the icub to take the origin position 
-		*		//client.goToPose(xd,od); // new target is xd,od
-		*		//feedback=yarp::math::operator*(x,0.0);	
-		*		//verifyFeedback();
-		*	    //igeo->setFeedback(feedback);
-		*		xd[0] = -0.04939;
-		*		xd[1] = -0.06839;
-		*		xd[2] = -0.05287;
-		*		double distance;
-		*		do
-		*		{
-		*			client.goToPose(xd,od); // new target is xd,od
-		*			client.getPose(x,o);
-		*			distance= ((x[0] - xd[0])*(x[0] - xd[0]) + (x[1] - xd[1])*(x[1] - xd[1]) + (x[2] - xd[2])*(x[2] - xd[2]));
-		*		}while(distance > 0.001);
-		*		
-		*		//we force the geom to take the origin position
-		*		igeo->getPosition(pos);
-		*		distance= ((xd[0] - pos[0])*(xd[0] - pos[0]) + (xd[1] - pos[1])*(xd[1] - pos[1]) + (xd[2] - pos[2])*(xd[2] - pos[2]));
-		*		//cout << "distance init= " << distance << " x= " << x.toString(3,3).c_str() << "pos=" <<  pos.toString(3,3).c_str()<< endl;
-		*		while(distance > 0.00005)
-		*		{
-		*			cout << "positionning the geomagic... =" << distance << endl;
-		*		    //yInfo("Sim position    = (%s)",x.toString(3,3).c_str());
-		*			//yInfo("Haptic position = (%s)", pos.toString(3,3).c_str()); 
-		*			feedback=yarp::math::operator*(yarp::math::operator-(xd,pos), 50.0); //(x-xd)*45.0; 
-		*
-		*			//yInfo("Feedback = (%s)", feedback.toString(3,3).c_str());
-		*			verifyFeedback(); 
-		*			//yInfo("Feedback = (%s)", feedback.toString(3,3).c_str());
-	    *
-		*			igeo->setFeedback(feedback);			
-		*			igeo->getPosition(pos);
-		*			client.getPose(x,o);
-		*			distance= ((xd[0] - pos[0])*(xd[0] - pos[0]) + (xd[1] - pos[1])*(xd[1] - pos[1]) + (xd[2] - pos[2])*(xd[2] - pos[2]));		
-		*		}
-		*		cout << "Geomagic positionned" << endl;
-		***/
-				
 		}
 		     
         return true;
@@ -342,7 +314,7 @@ int main(int argc,char *argv[])
     ResourceFinder rf;
     rf.configure(argc,argv);
 
-    Test test(yarp);    
+    Test test;    
     int r=test.runModule(rf);  
     
     return r;

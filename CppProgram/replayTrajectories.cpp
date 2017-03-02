@@ -7,13 +7,13 @@
  * 
  * To launch this program
  * 1. launch yarpserver
- * 2. launch gazebo or the real robot
- * 2. launch iKinCartesianSolver --robot icubGazeboSim --part left_arm
- * 2. launch wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim (to have information about forces)
- * 4. real robot: launch the gravity compensator
- * 2. launch demo_replayProMPs.m on matlab 
- * 3. launch this program.
- * 4. connect the port by typing in a terminal:
+ * 2. launch gazebo 
+ * 3. launch wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim (to have information about forces)
+ * 4. launch iKinCartesianSolver --robot icubGazeboSim --part left_arm
+ * 5. launch simCartesianControl --robot icubGazeboSim
+ * 6. launch demo_replayProMPs.m on matlab 
+ * 7. launch this program.
+ * 8. connect the port by typing in a terminal:
  * yarp connect /matlab/write /replay/read
  * yarp connect /replay/read /matlab/write
  * yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /replay/readForces
@@ -167,7 +167,6 @@ public:
             }
             compliance = input->get(3).asDouble(); // compliance ordered by matlab 
             
-            /*If you don't want to record forces delete these following lines*/
 			// read forces given by the wholeBodyDynamicsTree programm            
             for (int i=0; i<6; i++)
             {
@@ -175,7 +174,7 @@ public:
 				{
 					fext[i] = inputForces->get(i).asDouble();
 				}
-				else
+				else // if it didn't receive forces information return -1 (for example not connected)
 				{	
 					fext[i] = -1;
 					cout << "Read no forces/wrench." << endl;
