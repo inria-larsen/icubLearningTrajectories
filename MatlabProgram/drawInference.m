@@ -16,11 +16,11 @@ for vff=1:nbInput(1)
     dnG = size(nameFig,2);
 
     i = infTraj.reco;%reco{1};
-    visualisationShared(promp{i}.PSI_z*promp{i}.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(promp{i}.sigma_w )), sum(nbInput), z,  vff, 'b', nameFig);
-    nameFig = visualisation(promp{i}.PSI_z*promp{i}.mu_w, sum(nbInput), z, vff, 'b', nameFig);
+    visualisationShared(promp{i}.PSI_z*promp{i}.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(promp{i}.sigma_w )), sum(nbInput), z,  vff, 'g', nameFig);
+    nameFig = visualisation(promp{i}.PSI_z*promp{i}.mu_w, sum(nbInput), z, vff, 'g', nameFig);
     prevG = size(nameFig,2);
-    visualisationShared(promp{i}.PSI_z*infTraj.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(infTraj.sigma_w)), sum(nbInput), z,  vff, 'g', nameFig);
-    nameFig = visualisation(promp{i}.PSI_z*infTraj.mu_w, sum(nbInput), z, vff,'g', nameFig);
+    visualisationShared(promp{i}.PSI_z*infTraj.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(infTraj.sigma_w)), sum(nbInput), z,  vff, 'b', nameFig);
+    nameFig = visualisation(promp{i}.PSI_z*infTraj.mu_w, sum(nbInput), z, vff,'b', nameFig);
     newG = size(nameFig,2);
            ylabel(list{vff}, 'fontsize', 24);
          

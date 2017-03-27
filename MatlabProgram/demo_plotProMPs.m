@@ -37,23 +37,30 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('nameDataTrajectories', 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory('Data/bas', 'bottom', 'z', z, 'nbInput',nbInput);
+t2 = loadTrajectory('Data/haut', 'top', 'z', z, 'nbInput',nbInput);
+t3 = loadTrajectory('Data/milieu', 'middle', 'z', z, 'nbInput',nbInput);
+
 
 %plot recoverData
-drawRecoverData(t1, list);
+% drawRecoverData(t1, list);
+% drawRecoverData(t2, list);
+% drawRecoverData(t3, list);
 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
 promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
+promp{2} = computeDistribution(t2, nbFunctions, z,center_gaussian,h);
+promp{3} = computeDistribution(t3, nbFunctions, z,center_gaussian,h);
 
 %plot distribution
-drawDistribution(promp, list,z);
+%drawDistribution(promp, list,z);
 
-trial = size(promp,1)+1;
-while (trial > size(promp,1) || trial < 1)
-    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,1)),')']);
+trial = size(promp,2)+1;
+while (trial > size(promp,2) || trial < 1)
+    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,2)),')']);
 end
 disp(['We try the number ', num2str(trial)]);
 
@@ -64,14 +71,17 @@ test.totTime = promp{trial}.traj.totTime(3);
 test.alpha = z / test.totTime;
 test.partialTraj = [];
 test.nbData = nbData;
-for i=1:sum(promp{trial}.traj.nbInput)
+for i=1:promp{trial}.traj.nbInput(1)
     test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
 end
 
 
-%Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
 
+%Recognition of the movement
+[alphaTraj,type, x] = inferenceAllAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise);
+
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise, alphaTraj);
+%%
 %draw the infered movement
 drawInference(promp,infTraj, test,z)
 

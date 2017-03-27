@@ -10,21 +10,53 @@
 
     cont=1; %verify if exists other trajectories
     j=1;
-    if ~exist([PATH,'/record',num2str(j-1),'.txt'])
-        display('error no files with this name');
-        display([PATH,'/record',num2str(j-1),'.txt']);
-        cont=0;
-    end
-    while cont==1
-        data_tot{j} = load([PATH,'/record',num2str(j-1),'.txt']);
+ 
+    
+    listtmp = dir(PATH);
+    listtmp2 = find(vertcat(listtmp.isdir));
+    list = listtmp(listtmp2);
+    if(length(list)>3)
+        for parc=3:length(list)
+            cont=1;
+            k=1;
+            PATH2 = [PATH, '/', list(parc).name];
+            if (~exist([PATH2,'/record',num2str(k-1),'.txt']))
+                display('error no files with this name');
+                display([PATH,'/record',num2str(j-1),'.txt']);
+                cont=0;
+            end
+            while cont==1
+                data_tot{j} = load([PATH2,'/record',num2str(k-1),'.txt']);
 
-        data{j} = zeros( size(data_tot{j},1),9); % tall: nbIteration:9 (9 for position, forces and moment) 
-        data{j}(:,1:9) = [data_tot{j}(:,11:13),data_tot{j}(:,5:10)]; %11:13: real position of the robot; 5:10 forces and wrench
-        j=j+1;
+                data{j} = zeros( size(data_tot{j},1),9); % tall: nbIteration:9 (9 for position, forces and moment) 
+                data{j}(:,1:9) = [data_tot{j}(:,11:13),data_tot{j}(:,5:10)]; %11:13: real position of the robot; 5:10 forces and wrench
+                j=j+1;
+                k = k+1;
+                if ~exist([PATH2,'/record',num2str(k-1),'.txt'])
+                    cont=0;
+                end
+            end
+        end
+    else
         if ~exist([PATH,'/record',num2str(j-1),'.txt'])
+            display('error no files with this name');
+            display([PATH,'/record',num2str(j-1),'.txt']);
             cont=0;
         end
+        while cont==1
+            data_tot{j} = load([PATH,'/record',num2str(j-1),'.txt']);
+
+            data{j} = zeros( size(data_tot{j},1),9); % tall: nbIteration:9 (9 for position, forces and moment) 
+            data{j}(:,1:9) = [data_tot{j}(:,11:13),data_tot{j}(:,5:10)]; %11:13: real position of the robot; 5:10 forces and wrench
+            j=j+1;
+            if ~exist([PATH,'/record',num2str(j-1),'.txt'])
+                cont=0;
+            end
+        end
     end
+    
+    
+    
     trajectory.nbTraj = size(data,2);
     trajectory.nbInput = size(data{1},2);
     for i=1:size(data,2)

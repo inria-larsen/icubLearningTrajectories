@@ -52,7 +52,7 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory(nameDataTrajectories7 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory(nameDataTrajectories, 'top', 'z', z, 'nbInput',nbInput);
 
 %Compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function

@@ -31,7 +31,7 @@ To launch this program that learn trajectories from the geomagic touch. You can 
 1. It requires to have installed the geomagic touch driver and  to have done all its setup (see pre-installation). Then, you have to launch:
 2. 0st terminal:
 yarpserver
-3. 1st terminal:
+3. 1st terminal (after having launch all the geomagic configuration, see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 yarprobotinterface --context geomagic --config geomagic.xml
 4. 2nd terminal:
 gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf

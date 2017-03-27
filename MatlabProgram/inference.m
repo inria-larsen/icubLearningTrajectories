@@ -1,14 +1,19 @@
-function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nbData, expNoise)
+function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nbData, expNoise, alphacomp)
 %INFERENCE
 %in this function, we recongize a movement from some initial data
 %and we complete it. We recognize and modify only the position information 
 %In this inference version, we do the hypothesis that the phasis of the movement is the mean of the
 %phasis used during the learning.
 
+
 nbKindOfTraj = size(promps,2);
 nbInput(1)= promps{1}.traj.nbInput(1);
 nbInput(2) = promps{1}.traj.nbInput(2);
 
+% %TODO triche avec bon alpha:
+% for i=1:nbKindOfTraj
+%     promps{1}.mu_alpha = newTraj.alpha;
+% end
 
 %computation of the loglikelihood for each trajectory using only cartesian
 %coordinates
@@ -27,13 +32,13 @@ end
 reco = {0 , -Inf };
 for i=1:nbKindOfTraj
     %matrix of cartesian basis functions that correspond to the first nbData 
-    PSI_coor{i} = computeBasisFunction(z,nbFunctions(1), nbInput(1), promps{i}.mu_alpha, floor(z/promps{i}.mu_alpha), center_gaussian(1), h(1), nbData);
+    PSI_coor{i} = computeBasisFunction(z,nbFunctions(1), nbInput(1), alphacomp, floor(z/alphacomp), center_gaussian(1), h(1), nbData);
     %matrix of forces basis functions that correspond to the first nbData
     %PSI_forces{i} = computeBasisFunction(z,nbFunctions(2), promps{i}.traj.nbInput(2),promps{i}.mu_alpha, floor(z/promps{i}.mu_alpha), center_gaussian(2), h(2), nbData);%computeBasisForces(z,nbFunctions(2),mu_alpha(i), floor(z/mu_alpha(i)), h, nbData);
     
     %matrix of basis functions for all data that correspond to the first
     %nbData with phasis alpha_mean
-    PSI_mean{i} =  computeBasisFunction(z,nbFunctions, nbInput, promps{i}.mu_alpha, floor(z/promps{i}.mu_alpha), center_gaussian, h, floor(z/promps{i}.mu_alpha));%blkdiag(PSI_coor{i},PSI_forces{i}); %PSI_coor{i};
+    PSI_mean{i} =  computeBasisFunction(z,nbFunctions, nbInput, alphacomp, floor(z/alphacomp), center_gaussian, h, floor(z/alphacomp));%blkdiag(PSI_coor{i},PSI_forces{i}); %PSI_coor{i};
     
     %we compute the learned distribution trajectory of cartesian position
     u{i} = PSI_coor{i}*mu_w_coord{i};
@@ -62,13 +67,13 @@ sigma_new = promps{reco{1}}.sigma_w;
 %we aren't suppose to know "realData",  here it is only used to draw the real
 %trajectory of the sample if we continue it to the end
 
-timeInf = z / promps{reco{1}}.mu_alpha;
+timeInf = z / alphacomp;
 display(['The real phasis is ', num2str(newTraj.alpha), ' with total time : ', num2str(newTraj.totTime) ])
-display(['The supposed phasis is ', num2str( promps{reco{1}}.mu_alpha), ' with total time : ', num2str(z / promps{reco{1}}.mu_alpha) ])
+display(['The supposed phasis is ', num2str(alphacomp), ' with total time : ', num2str(z / alphacomp) ])
 
 %%Creation of the basis function with mean phasis & nbData iterations
  
-infTraj.alpha =  promps{reco{1}}.mu_alpha;
+infTraj.alpha =  alphacomp;
 infTraj.timeInf = z / infTraj.alpha ;
 infTraj.PSI = PSI_mean{reco{1}};
 ma = ones(1,nbData);
