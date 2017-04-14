@@ -37,6 +37,7 @@ function promp = computeDistribution(traj, nbFunctions, z,center_gaussian,h)
     promp.mu_w = mean(listw)';
     promp.sigma_w = cov(listw); %sometimes have < 0 for forces as it is not
     promp.sigma_w = nearestSPD(promp.sigma_w);
+    promp.meanTimes= mean(promp.traj.totTime);
 end
    
    

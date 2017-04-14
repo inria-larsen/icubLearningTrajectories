@@ -37,7 +37,7 @@ set(0,'DefaultAxesFontSize',12)
        % plot(b((vff-1)*100 + 1:(vff)*100) ,'--', 'Color', [i/nbKindOfpromp{1}.traj, 0, 0]);hold on;
          ylabel(list{vff}, 'fontsize', 24);
          if(vff==promp{1}.traj.nbInput(1))
-              xlabel('iterations', 'fontsize', 24);
+              xlabel('Normalized #samples', 'fontsize', 24);
          end
          set(gca, 'fontsize', 20);
     end

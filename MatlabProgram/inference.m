@@ -6,8 +6,8 @@ function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nb
 %phasis used during the learning.
 
 nbKindOfTraj = size(promps,2);
-nbInput(1)= promps{1}.traj.nbInput(1);
-nbInput(2) = promps{1}.traj.nbInput(2);
+nbInput= promps{1}.traj.nbInput;
+
 
 
 %computation of the loglikelihood for each trajectory using only cartesian
