@@ -42,7 +42,7 @@
            <dependencies>
             <port timeout="10">/simCartesianControl/left_arm/command:o</port>
         </dependencies>
-        
+        <stdio>icub01</stdio>
         <node>icub01</node>
     </module>
 

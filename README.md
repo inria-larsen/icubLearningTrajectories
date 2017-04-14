@@ -22,8 +22,9 @@ The geomagic touch software (see here: https://github.com/inria-larsen/icub-manu
 `mkdir build`   
 `cd build`   
 `ccmake ../`   
-`make`   
+`make install`   
 
+Then you have to add the path for the file worldPROMPS.sdf into your bashrc.
 # Launch the program recordTrajectories.cpp
 
 To launch this program that learn trajectories from the geomagic touch. You can use the world "worldPROMPS.sdf" to have some goal to achieve with the robot left arm. Open the code of this function to have more information about how to launch it.
@@ -34,16 +35,14 @@ yarpserver
 3. 1st terminal:
 yarprobotinterface --context geomagic --config geomagic.xml
 4. 2nd terminal:
-gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf
-5. 3d terminal: 
-wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim
-6. 4th terminal:
-iKinCartesianSolver --robot icubGazeboSim --part left_arm (from the path where the .ini linked to gazebo are, if they are not well configured)
-7. 5th terminal:
-simCartesianControl --robot icubGazeboSim (from the path where the .ini linked to gazebo are) 
-8. 6th terminal: in CppProgram/build/bin:
-./record
-9. 7th terminal: create the connection:
+yarpmanager
+5. Open the xml file (in folder /App) and launch one by one the applications:
+gazebo
+wholeBodyDynamicsTree
+iKinCartesianSolver 
+simCartesianControl 
+recordTrajectoriesWithGeomagic
+9. Connect from this same xml file the port:
 yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
 
 Now you can use the launched program:
