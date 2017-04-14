@@ -55,7 +55,7 @@ using namespace yarp::sig;
 //using namespace yarp::math;
 using namespace hapticdevice;
 
-class Test: public yarp::os::RFModule
+class RecordWithGeomagic: public yarp::os::RFModule
 {
 protected:
     // geomagic parameters
@@ -114,7 +114,14 @@ protected:
         Property optGeo("(device hapticdeviceclient)");
         optGeo.put("remote",("/"+geomagic).c_str());
         optGeo.put("local",("/"+name+"/geomagic").c_str());
-        if (!drvGeomagic.open(optGeo)) return false;
+        if (!drvGeomagic.open(optGeo)) 
+		{
+			cout<<"Error during configuration: cannot find the Geomagic. Is it attached ?"<<endl;
+			Time::delay(3.0);
+			return false;
+		}
+        cout<<"Geomagic is opened."<<endl;
+
         drvGeomagic.view(igeo);              
 
         Matrix T=yarp::math::zeros(4,4);
@@ -304,6 +311,9 @@ public:
 int main(int argc,char *argv[])
 {           
     Network yarp;
+    int r=0;
+
+    cout << "begin" <<endl;
 
     if (!yarp.checkNetwork())
     {
@@ -312,10 +322,24 @@ int main(int argc,char *argv[])
     }
 
     ResourceFinder rf;
-    rf.configure(argc,argv);
-
-    Test test;    
-    int r=test.runModule(rf);  
+    cout << "before conf" <<endl;
+    bool ret = rf.configure(argc,argv);
+	cout << "after conf" <<endl;
+	if(ret==false)
+	{
+			for(int i=0; i<100;i++)
+			{
+				cout<<"Error during the configuration, aborting."<<endl;
+				Time::delay(5.0);
+			}
+	}
+	else
+	{	
+		RecordWithGeomagic test;    
+		r=test.runModule(rf);
+		cout<<"End run module."<<endl;
+	Time::delay(5.0);
+	} 
     
     return r;
 }

@@ -1,0 +1,56 @@
+<application>
+    <name>recordTrajectoriesGeomagic</name>
+    <description>Module to record several trajectories using the Geomagic Touch with icubGazebo</description>
+    <version>1.0</version>
+
+    <module>
+        <name>gazebo</name>
+        <parameters>-slibgazebo_yarp_clock.so worldPROMPS.sdf</parameters>
+        <node>icub01</node>
+    </module>
+
+    <module>
+        <name>wholeBodyDynamicsTree</name>
+        <parameters>--autoconnect --robot icubGazeboSim</parameters>
+        <dependencies>
+            <port timeout="10">/icubGazeboSim/left_arm/state:o</port>
+        </dependencies>
+        <node>icub01</node>
+    </module>
+
+    <module>
+        <name>iKinCartesianSolver</name>
+        <parameters>--robot icubGazeboSim --part left_arm</parameters>
+        <dependencies>
+            <port timeout="10">/icubGazeboSim/left_arm/state:o</port>
+        </dependencies>
+        <node>icub01</node>
+    </module>
+
+    <module>
+        <name>simCartesianControl</name>
+        <parameters>--robot icubGazeboSim </parameters>
+   <dependencies>
+            <port timeout="10">/cartesianSolver/left_arm/out</port>
+        </dependencies>
+        <node>icub01</node>
+    </module>
+
+    <module>
+        <name>recordTrajectoriesWithGeomagic</name>
+        <parameters></parameters>
+           <dependencies>
+            <port timeout="10">/simCartesianControl/left_arm/command:o</port>
+        </dependencies>
+        
+        <node>icub01</node>
+    </module>
+
+
+    <connection>
+          <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
+          <to>/record/read</to>
+          <protocol>udp</protocol>
+    </connection>
+
+</application>

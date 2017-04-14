@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.9)
-project(learningTrajectories)
+project(learningTrajectoriesWithGeomagic)
 
 find_package(YARP         REQUIRED)
 find_package(ICUBcontrib  REQUIRED)
@@ -16,12 +16,12 @@ include_directories(${YARP_INCLUDE_DIRS} ${hapticdevice_INCLUDE_DIRS})
     
 add_definitions(-D_USE_MATH_DEFINES)
 
-add_executable(record recordTrajectories.cpp cartesianClient.cpp)
-target_link_libraries(record ${YARP_LIBRARIES} pthread)
+add_executable(recordTrajectoriesWithGeomagic recordTrajectories.cpp cartesianClient.cpp)
+target_link_libraries(recordTrajectoriesWithGeomagic ${YARP_LIBRARIES} pthread)
 
-add_executable(replay replayTrajectories.cpp cartesianClient.cpp)
-target_link_libraries(replay ${YARP_LIBRARIES} pthread)
+add_executable(replayTrajectoriesWithGeomagic replayTrajectories.cpp cartesianClient.cpp)
+target_link_libraries(replayTrajectoriesWithGeomagic ${YARP_LIBRARIES} pthread)
 
-install(TARGETS record DESTINATION bin)
-install(TARGETS replay DESTINATION bin)
+install(TARGETS recordTrajectoriesWithGeomagic DESTINATION bin)
+install(TARGETS replayTrajectoriesWithGeomagic DESTINATION bin)
 
