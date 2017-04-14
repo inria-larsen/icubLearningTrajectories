@@ -1,5 +1,5 @@
  function [trajectory] = loadTrajectory(PATH, nameT,varargin)
-%loadTrajectory recovers trajectories of the folder PATH.
+%LOADTRAJECTORY recovers trajectories of the folder PATH.
 %input:
 % PATH: path for the trajectory where the "recordX.txt" files are 
 % nameT: label of the type of trajectory
@@ -7,6 +7,10 @@
 % compute the phasis of the trajectory).
 %OUTPUT:
 % trajectory: give an object trajectory 
+% FILE STRUCTURE
+%The file .txt has to be structured as following:
+%#TIME #geomagicPositionX #geomagicPositionY #geomagicPositionZ #fx #fy #fz #wx #wy #wz #icubX #icubY #icubZ.
+%This function records an object "trajectory" where the input variable are (iCubX; iCubY; iCubZ; fx; fy; fz; wx; wy; wz).
 
     cont=1; %verify if exists other trajectories
     j=1;
