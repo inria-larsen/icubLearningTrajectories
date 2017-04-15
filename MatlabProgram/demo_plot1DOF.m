@@ -23,7 +23,7 @@ nbFunctions(1) = 5; %number of basis functions
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-nbData = 10; %number of data max with what you try to find the correct movement
+nbData = 60; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 

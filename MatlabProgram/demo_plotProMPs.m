@@ -39,7 +39,7 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory('Data/traj1', 'top', 'referenceNumber', z, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %plot recoverData
 drawRecoverData(t1, list, 'Specific');
