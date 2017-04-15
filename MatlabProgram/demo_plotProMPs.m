@@ -8,6 +8,8 @@
 close all;
 clearvars;
 warning('off','MATLAB:colon:nonIntegerIndex')
+addpath('used_functions');
+
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};

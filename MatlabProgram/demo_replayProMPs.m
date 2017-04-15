@@ -7,6 +7,7 @@
 % oriane.dermy@gmail.com with subject [proMPs_toolbox]
 close all;
 clearvars;
+addpath('used_functions');
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 nameDataTrajectories = 'Data/traj1';

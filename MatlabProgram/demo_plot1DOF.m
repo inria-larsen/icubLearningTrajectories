@@ -7,8 +7,8 @@
 
 close all;
 clearvars;
-warning('off','MATLAB:colon:nonIntegerIndex')
-
+warning('off','MATLAB:colon:nonIntegerIndex');
+addpath('used_functions');
 
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
