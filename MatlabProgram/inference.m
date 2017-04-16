@@ -6,9 +6,8 @@ function [infTraj] = inference(promps,newTraj,nbFunctions,z,center_gaussian,h,nb
 %phasis used during the learning.
 
 
-nbKindOfTraj = size(promps,2);
-nbInput(1)= promps{1}.traj.nbInput(1);
-nbInput(2) = promps{1}.traj.nbInput(2);
+nbKindOfTraj = length(promps);
+nbInput= promps{1}.traj.nbInput;
 
 % %TODO triche avec bon alpha:
 % for i=1:nbKindOfTraj
@@ -38,7 +37,7 @@ for i=1:nbKindOfTraj
     
     %matrix of basis functions for all data that correspond to the first
     %nbData with phasis alpha_mean
-    PSI_mean{i} =  computeBasisFunction(z,nbFunctions, nbInput, alphacomp, floor(z/alphacomp), center_gaussian, h, floor(z/alphacomp));%blkdiag(PSI_coor{i},PSI_forces{i}); %PSI_coor{i};
+    PSI{i} =  computeBasisFunction(z,nbFunctions, nbInput, alphacomp, floor(z/alphacomp), center_gaussian, h, floor(z/alphacomp));%blkdiag(PSI_coor{i},PSI_forces{i}); %PSI_coor{i};
     
     %we compute the learned distribution trajectory of cartesian position
     u{i} = PSI_coor{i}*mu_w_coord{i};
@@ -66,8 +65,6 @@ sigma_new = promps{reco{1}}.sigma_w;
 
 %we aren't suppose to know "realData",  here it is only used to draw the real
 %trajectory of the sample if we continue it to the end
-
-timeInf = z / alphacomp;
 display(['The real phasis is ', num2str(newTraj.alpha), ' with total time : ', num2str(newTraj.totTime) ])
 display(['The supposed phasis is ', num2str(alphacomp), ' with total time : ', num2str(z / alphacomp) ])
 
@@ -75,7 +72,7 @@ display(['The supposed phasis is ', num2str(alphacomp), ' with total time : ', n
  
 infTraj.alpha =  alphacomp;
 infTraj.timeInf = z / infTraj.alpha ;
-infTraj.PSI = PSI_mean{reco{1}};
+infTraj.PSI = PSI{reco{1}};
 ma = ones(1,nbData);
 mb = zeros(1,round(z /infTraj.alpha)- nbData); 
 mc = zeros(1, round(z /infTraj.alpha));
@@ -99,9 +96,9 @@ infTraj.sigma_w = sigma_new;
 infTraj.reco = reco{1}; 
 
 % %to compute error function
-% psi_inf_tot = computeBasisFunction(z,nbFunctions, nbDof, mu_alpha(i), (z/mu_alpha(i)), center_gaussian, h, (z/mu_alpha(i)));
-% minSize= min(size(psi_inf_tot,1), size(y_trial_Tot{trial},1));
+% psi_inf_tot = computeBasisFunction(z,nbFunctions, nbDof, alphacomp, (z/alphacomp), center_gaussian, h, (z/alphacomp));
+% minSize= min(size(psi_inf_tot,1), size(newTraj.traj,1));
 % tmp = psi_inf_tot*mu_new;
 % display(['difference entre les courbes for ', num2str(nbData), 'data']);
-% sum(abs(y_trial_Tot{trial}(1:minSize,:) -tmp(1:minSize,:)))
+% sum(abs(newTraj.traj(1:minSize,:) -tmp(1:minSize,:)))
 end

@@ -59,7 +59,8 @@
     
     trajectory.nbTraj = size(data,2);
     trajectory.nbInput = size(data{1},2);
-    for i=1:size(data,2)
+    totalTime = zeros(size(data,2),1);
+    for i=1:trajectory.nbTraj
         trajectory.y{i} = [];
         %val = [];
         %to avoid problem after

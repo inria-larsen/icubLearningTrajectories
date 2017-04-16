@@ -1,49 +1,50 @@
 set(0,'DefaultLineLinewidth',1)
 set(0,'DefaultAxesFontSize',12)
 
-mu_wcoor = promp{1}.mu_w(1:3*5);
-sigma_wcoor = promp{1}.sigma_w(1:3*5, 1:3*5);
+
+mu_wcoor = promp{1}.mu_w(1:nbInput(1)*5);
+sigma_wcoor = promp{1}.sigma_w(1:nbInput(1)*5, 1:nbInput(1)*5);
 
 psiExp_part = computeBasisFunction(z,nbFunctions(1), nbInput(1),  test.alpha, floor(z/ test.alpha), center_gaussian(1), h(1), nbData);
-exppart = psiExp_part*promp{1}.mu_w(1:3*5);
+exppart = psiExp_part*promp{1}.mu_w(1:nbInput(1)*5);
 sigexpart = psiExp_part*0.1*sqrt(diag(sigma_wcoor));
 
 psiExp_tot = computeBasisFunction(z,nbFunctions(1), nbInput(1),  test.alpha, floor(z/ test.alpha), center_gaussian(1), h(1), floor(z/ test.alpha));
-exptot = psiExp_tot*promp{1}.mu_w(1:3*5);
+exptot = psiExp_tot*promp{1}.mu_w(1:nbInput(1)*5);
 sigextot = psiExp_tot*0.1*sqrt(diag(sigma_wcoor));
 
 psiComp_part = computeBasisFunction(z,nbFunctions(1), nbInput(1),  alphaTraj, floor(z/ alphaTraj), center_gaussian(1), h(1), nbData);
 psiComp_tot = computeBasisFunction(z,nbFunctions(1), nbInput(1),  alphaTraj, floor(z/ alphaTraj), center_gaussian(1), h(1), floor(z/ alphaTraj));
-comppart = psiComp_part*promp{1}.mu_w(1:3*5);
-comptot = psiComp_tot*promp{1}.mu_w(1:3*5);
+comppart = psiComp_part*promp{1}.mu_w(1:nbInput(1)*5);
+comptot = psiComp_tot*promp{1}.mu_w(1:nbInput(1)*5);
 sigcomppart = psiComp_part*0.1*sqrt(diag(sigma_wcoor));
 sigcomptot = psiComp_tot*0.1*sqrt(diag(sigma_wcoor));
 
 psiMu_part = computeBasisFunction(z,nbFunctions(1), nbInput(1),  promp{1}.mu_alpha, floor(z/ promp{1}.mu_alpha), center_gaussian(1), h(1), nbData);
 psiMu_tot = computeBasisFunction(z,nbFunctions(1), nbInput(1),  promp{1}.mu_alpha, floor(z/ promp{1}.mu_alpha), center_gaussian(1), h(1), floor(z/ promp{1}.mu_alpha));
-mupart = psiMu_part*promp{1}.mu_w(1:3*5);
-mutot = psiMu_tot*promp{1}.mu_w(1:3*5);
+mupart = psiMu_part*promp{1}.mu_w(1:nbInput(1)*5);
+mutot = psiMu_tot*promp{1}.mu_w(1:nbInput(1)*5);
 sigmupart = psiMu_part*0.1*sqrt(diag(sigma_wcoor));
 sigmutot = psiMu_part*0.1*sqrt(diag(sigma_wcoor));
 
 fig = figure;
-subplot(3,1,3)
-plot(test.partialTraj(nbData*2+1:nbData*3),'b');hold on;
-plot(comppart(nbData*2+1:nbData*3),'m');
-plot(mupart(nbData*2+1:nbData*3),'r');
-plot(exppart(nbData*2+1:nbData*3),'g');
-plot(x(nbData*2+1:nbData*3),'k');hold on;
-
+% subplot(3,1,3)
+% plot(test.partialTraj(nbData*2+1:nbData*3),'b');hold on;
+% plot(comppart(nbData*2+1:nbData*3),'m');
+% plot(mupart(nbData*2+1:nbData*3),'r');
+% plot(exppart(nbData*2+1:nbData*3),'g');
+% plot(x(nbData*2+1:nbData*3),'k');hold on;
 % 
-plot(exptot(1+floor(z/ test.alpha)*2:floor(z/ test.alpha)*3),':g');
-plot(mutot(2*floor(z/ promp{1}.mu_alpha)+1:floor(z/ promp{1}.mu_alpha)*3),':r');
-plot(comptot(floor(z/ alphaTraj)*2+1: floor(z/ alphaTraj)*3),':m');
-plot(test.traj(test.totTime*2+1:test.totTime*3),':b');
-
+% % 
+% plot(exptot(1+floor(z/ test.alpha)*2:floor(z/ test.alpha)*3),':g');
+% plot(mutot(2*floor(z/ promp{1}.mu_alpha)+1:floor(z/ promp{1}.mu_alpha)*3),':r');
+% plot(comptot(floor(z/ alphaTraj)*2+1: floor(z/ alphaTraj)*3),':m');
+% plot(test.traj(test.totTime*2+1:test.totTime*3),':b');
 % 
-% visualisationShared(exppart, sigexpart, nbInput(1), nbData,  3, 'g', fig);
-% visualisationShared(comppart, sigcomppart, nbInput(1), nbData,  3, 'm', fig);
-% visualisationShared(mupart, sigmupart, nbInput(1), nbData,  3, 'r', fig);
+% % 
+% % visualisationShared(exppart, sigexpart, nbInput(1), nbData,  3, 'g', fig);
+% % visualisationShared(comppart, sigcomppart, nbInput(1), nbData,  3, 'm', fig);
+% % visualisationShared(mupart, sigmupart, nbInput(1), nbData,  3, 'r', fig);
 
 
 
