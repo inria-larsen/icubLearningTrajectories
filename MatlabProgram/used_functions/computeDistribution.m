@@ -22,9 +22,9 @@ function promp = computeDistribution(traj, nbFunctions, z,center_gaussian,h)
         %resolve a little bug
         sizeY  = size(promp.traj.y{j},1);
         if(sizeY ~= size(promp.PSI{j},1))
-            prom.traj.y{j} = prom.traj.y{j}(1:sizeY-(sum(promp.traj.nbInput)));
-            prom.traj.totTime(j) = prom.traj.totTime(j) -sum(promp.traj.nbInput);
-            prom.traj.alpha(j) = z /prom.traj.totTime(j);
+            promp.traj.y{j} = promp.traj.y{j}(1:sizeY-(sum(promp.traj.nbInput)));
+            promp.traj.totTime(j) = promp.traj.totTime(j) -sum(promp.traj.nbInput);
+            promp.traj.alpha(j) = z /promp.traj.totTime(j);
         end
        sizeNoise = size(promp.PSI{j}'*promp.PSI{j});
        %Least square

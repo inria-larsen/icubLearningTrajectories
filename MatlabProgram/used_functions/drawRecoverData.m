@@ -4,12 +4,12 @@ set(0,'DefaultLineLinewidth',1);
 set(0,'DefaultAxesFontSize',12);
 
 if(length(varargin)==1) 
-    if(varargin{1}=='Specific')%we put a specification  
+    if(varargin{1}=='Specific')%If you want to plot position/forces/moment separately
         %Here we plot the cartesian position
 
             fig22 = figure;
-            for l=1:traj.nbInput(1)%nbDofTot  
-                subplot(traj.nbInput(1),1,l)%size(nbDof,2),l);
+            for l=1:traj.nbInput(1)
+                subplot(traj.nbInput(1),1,l)
                 for i=1:traj.nbTraj     
                     fig22 = visualisation(traj.y{i},sum(traj.nbInput),traj.totTime(i), l, ':b',fig22,traj.realTime{i});hold on;
                 end
@@ -72,7 +72,7 @@ else
 
     fig22 = figure;
     for l=1:traj.nbInput(1)  
-        subplot(traj.nbInput(1),1,l)%size(nbDof,2),l);
+        subplot(traj.nbInput(1),1,l)
         for i=1:traj.nbTraj     
             fig22 = visualisation(traj.y{i},sum(traj.nbInput),traj.totTime(i), l, ':b',fig22,traj.realTime{i});hold on;
         end

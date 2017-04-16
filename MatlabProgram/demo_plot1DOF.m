@@ -26,7 +26,7 @@ nbFunctions(1) = 5; %number of basis functions to represent nbInput(1)
 %variable that you can tune to achieve the trajectory correctly: correspond
 %to the expected data noise
 expNoise = 0.00001;
-nbData = 10; %number of observed data during the inference
+nbData = 60; %number of observed data during the inference
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -60,9 +60,9 @@ promp{1} = computeDistribution(t1, nbFunctions, refNbIteration,center_gaussian,h
 drawDistribution(promp, inputName,refNbIteration);
 
 %creation of a trajectory test
-test.traj = promp{1}.traj.y{5};
-test.trajM = promp{1}.traj.yMat{5};
-test.totTime = promp{1}.traj.totTime(5);
+test.traj = promp{1}.traj.y{3};
+test.trajM = promp{1}.traj.yMat{3};
+test.totTime = promp{1}.traj.totTime(3);
 test.alpha = refNbIteration / test.totTime;
 test.partialTraj = [];
 test.nbData = nbData;

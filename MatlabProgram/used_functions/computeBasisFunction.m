@@ -1,55 +1,45 @@
-%In this function, we create basis function matrix corresponding to the
-%number of input information we have and the number of basis function we
-%have defined with their bandwith h.
+function PSI = computeBasisFunction(refTime,nbFunctions, nbInput, alpha, totalTime, center_gaussian, h, nbData)
+%COMPUTEBASISFUNCTION creates the basis function matrix. 
+%tall: [nbInput*nbData]x[nbFunctions*nbData]
+%Inputs:
+% refTime: time reference used to compute promp independently to the
+% trajectory phases.
+% nbFunctions: number of RBF we want to model the trajectory
+% alpha: phasis of the trajectory
+% totalTime: the total number of samples to finish the trajectory
+% center_gaussian: where the functions will be placed.
+% h: bandwith of the RBF
+% nbData: normally = totalTime. But if you want a subpart of the matrix,
+% you can specify this number.
 
-function PSI = computeBasisFunction(z,nbFunctions, nbDof, alpha, totalTime, center_gaussian, h, nbData)
-    %creating the center of basis function model
-    
-for k=1:size(nbFunctions,2)
-    for i = 1 : nbFunctions(k) 
-        c(k,i) = center_gaussian(k)*(i-1); 
-    end
-%     for k=1:size(nbFu
-
-    for t=1:totalTime %z / alpha
-        %creating a basis functions model (time*nbFunctions)
-        for i = 1 : nbFunctions(k)
-            val{k} = -(alpha*t*0.01-c(k,i))*(alpha*t*0.01-c(k,i))/(h(k));
-            basis{k}(t,i) = exp(val{k});
+    for k=1:size(nbFunctions,2)
+        for i = 1 : nbFunctions(k) 
+            c(k,i) = center_gaussian(k)*(i-1); 
         end
- 
-        sumBI = sum(basis{k}(t,:));
-        for i = 1 : nbFunctions(k)
-            phi{k}(t,i) = basis{k}(t,i) / sumBI;
+
+        for t=1:totalTime
+            %creating a basis functions model (time*nbFunctions)
+            for i = 1 : nbFunctions(k)
+                val{k} = -(alpha*t*(1/refTime)-c(k,i))*(alpha*t*(1/refTime)-c(k,i))/(h(k));
+                basis{k}(t,i) = exp(val{k});
+            end
+
+            %normalization of the RBF
+            sumBI = sum(basis{k}(t,:));
+            for i = 1 : nbFunctions(k)
+                phi{k}(t,i) = basis{k}(t,i) / sumBI;
+            end
+        end
+    end    
+
+    %Creation of the diagonal matrix of all the basis functions
+    for i=1:size(nbFunctions,2)
+        for j =1:nbInput(i)
+           if and(i==1,j==1)
+               PSI = phi{i}(1:nbData,:);
+           else
+               PSI = blkdiag(PSI, phi{i}(1:nbData,:));
+           end
         end
     end
-    
-    
-end    
-
-for i=1:size(nbFunctions,2)
-    for j =1:nbDof(i)
-       if and(i==1,j==1)
-           PSI = phi{i}(1:nbData,:);
-       else
-           PSI = blkdiag(PSI, phi{i}(1:nbData,:));
-       end
-    end
-end
-
-%      %draw the basis function
-%     figure;
-%     for k=1:size(nbFunctions,2)
-%          for i=1:nbFunctions(k)
-%            % plot(phi{k}(:,i), 'color', [0, k/size(nbFunctions,2), 0]); hold on;
-%             plot(basis{k}(:,i), 'color', [0, k/size(nbFunctions,2), 0]);hold on;
-%          end
-%     end
-%     title('representation of the basis function used for each type of data')
-%     xlabel('time')
-%     ylabel('basis normalized')
-%     yaxis([0 2])
-    %TODO ameliorate here to pu as much as we have trajectories!
-    %CREATING THE MATRIX BLOCK FOR ALL DOF
-
 end
