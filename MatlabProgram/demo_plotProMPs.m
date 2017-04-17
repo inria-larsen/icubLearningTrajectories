@@ -75,14 +75,20 @@ for i=1:promp{trial}.traj.nbInput(1)
     test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
 end
 
+t{1} = t1;
+t{2} = t2;
+t{3} = t3;
+%%%test alpha computation from nbData
+w = computeAlpha(nbData,t, nbInput);
+promp{1}.w_alpha= w{1};
+promp{2}.w_alpha = w{2};
+promp{3}.w_alpha = w{3};
 
-
+%[promp{1}.w_alpha] = computeAlpha(nbData,t1);
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAllAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise);
+[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise, 'MO');
 
 infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise, alphaTraj);
 %%
 %draw the infered movement
 drawInference(promp,infTraj, test,z)
-
-
