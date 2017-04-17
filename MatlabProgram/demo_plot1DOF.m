@@ -10,7 +10,6 @@ clearvars;
 warning('off','MATLAB:colon:nonIntegerIndex');
 addpath('used_functions');
 
-
 %%%%%%%%%%%%%%%VARIABLES, please look at the README
 DataPath= 'Data/traj1_1DOF.mat'; %for the recorded txt file sample: 'Data/traj1'
 typeRecover= '.mat' %if it is txt file with all data, write '.txt'
@@ -44,17 +43,17 @@ if(strcmp(typeRecover,'.mat')==1)
     load(DataPath);
 else
     %recover the data saved in the Data/trajX/recordY.txt files
-    t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+    t{1} = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
 end
 
 %plot recoverData
-drawRecoverData(t1, inputName);
+drawRecoverData(t{1}, inputName);
 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
-promp{1} = computeDistribution(t1, nbFunctions, refNbIteration,center_gaussian,h);
+promp{1} = computeDistribution(t{1}, nbFunctions, refNbIteration,center_gaussian,h);
 
 %plot distribution
 drawDistribution(promp, inputName,refNbIteration);
@@ -70,12 +69,9 @@ for i=1:sum(promp{1}.traj.nbInput)
     test.partialTraj = [test.partialTraj; promp{1}.traj.yMat{3}(1:nbData,i)];
 end
 
-
-          % %%%test alpha computation from nbData
-          vaaa{1} = t1;
-            w = computeAlpha(nbData,vaaa, nbInput);
-            %[promp{1}.w_alpha] = computeAlpha(nbData,t1);
-            promp{1}.w_alpha = w{1};
+%%%test w_alpha model
+w = computeAlpha(nbData,t{1}, nbInput);
+promp{1}.w_alpha = w{1};
 
 [alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,refNbIteration,center_gaussian,h,nbData, expNoise, 'MO');
 %Recognition of the movement
