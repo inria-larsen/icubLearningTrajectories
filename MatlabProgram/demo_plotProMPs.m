@@ -21,7 +21,7 @@ nbFunctions(2) = 5; %number of basis functions for the second type of input (cou
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-nbData = 60; %number of data max with what you try to find the correct movement
+nbData = 30; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -76,8 +76,9 @@ for i=1:promp{trial}.traj.nbInput(1)
 end
 
 %%%test alpha computation from nbData
+
 t{1} = t1;
-t{2} =t2;
+t{2} = t2;
 t{3} = t3;
 w = computeAlpha(nbData,t, nbInput);
 promp{1}.w_alpha= w{1};
@@ -91,5 +92,3 @@ infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, exp
 %%
 %draw the infered movement
 drawInference(promp,infTraj, test,z)
-
-
