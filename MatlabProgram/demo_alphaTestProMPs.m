@@ -12,7 +12,7 @@ warning('off','MATLAB:colon:nonIntegerIndex')
 nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
-z=100;
+refTime=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
 
@@ -51,23 +51,28 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t{1} = loadTrajectory('Data/Test_WBD/trajG1', 'Left', 'z', z, 'nbInput',nbInput);
-t{2} = loadTrajectory('Data/Test_WBD/trajG2', 'Left', 'z', z, 'nbInput',nbInput);
+t{1} = loadTrajectory('Data/Test_WBD/trajG1', 'Left', 'z', refTime, 'nbInput',nbInput);
+t{2} = loadTrajectory('Data/Test_WBD/trajG2', 'Left', 'z', refTime, 'nbInput',nbInput);
 
 %plot recoverData
  drawRecoverData(t{1}, list);
  drawRecoverData(t{2}, list);
 
+%partition data between training and tests
+[train1,test1] = partitionTrajectory(t{1},1,procentData,refTime);
+[train2,test2] = partitionTrajectory(t{2},1,procentData,refTime);
+
+ 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
-promp{1} = computeDistribution(t{1}, nbFunctions, z,center_gaussian,h);
-promp{2} = computeDistribution(t{2}, nbFunctions, z,center_gaussian,h);
+promp{1} = computeDistribution(t{1}, nbFunctions, refTime,center_gaussian,h);
+promp{2} = computeDistribution(t{2}, nbFunctions, refTime,center_gaussian,h);
 
 %plot distribution
-drawDistribution(promp{1}, list,z,[1:3]);
-drawDistribution(promp{2}, list,z,[1:3]);
+drawDistribution(promp{1}, list,refTime,[1:3]);
+drawDistribution(promp{2}, list,refTime,[1:3]);
 
 
 trial = 1;%size(promp,2)+1;
@@ -76,35 +81,28 @@ while (trial > size(promp,2) || trial < 1)
 end
 disp(['We try the number ', num2str(trial)]);
 
-%creation of a trajectory test
-test.traj = promp{trial}.traj.y{5};
-test.trajM = promp{trial}.traj.yMat{5};
-test.totTime = promp{trial}.traj.totTime(5);
-test.alpha = z / test.totTime;
-test.partialTraj = [];
-nbData = round((test.totTime*procentData)/100);
-test.partialTrajM = test.trajM(1:nbData,:);
-test.nbData = nbData;
-for i=1:promp{trial}.traj.nbInput(1)
-    test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{5}(1:nbData,i)];
+if(trial==1)
+    test=test1{1};
+else
+    test = test2{1};
 end
 
 %%%test alpha computation from nbData
-w = computeAlpha(nbData,t, nbInput);
+w = computeAlpha(test.nbData,t, nbInput);
 promp{1}.w_alpha = w{1};
 promp{2}.w_alpha = w{2}
 
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise, typeR);
+[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,refTime,center_gaussian,h,test.nbData, expNoise, typeR);
 data.typeTot(typeReco, actTest) = type;
 data.errAlpha(typeReco, actTest) = abs(alphaTraj- test.alpha);
 end
 end
 %alphaTraj = promp{1}.mu_alpha
 
-%  infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise, alphaTraj);
+%  infTraj = inference(promp, test, nbFunctions, refTime, center_gaussian, h, test.nbData, expNoise, alphaTraj);
 % % %%
 % % %draw the infered movement
-%  drawInference(promp,infTraj, test,z)
+%  drawInference(promp,infTraj, test,refTime)
 % 
 

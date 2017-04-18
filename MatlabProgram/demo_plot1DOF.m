@@ -38,13 +38,14 @@ end
 center_gaussian(1) = 1.0 / (nbFunctions(1));
 h(1) = center_gaussian(1)/nbFunctions(1) %bandwidth of the gaussians
 
-
 if(strcmp(typeRecover,'.mat')==1)
     load(DataPath);
 else
     %recover the data saved in the Data/trajX/recordY.txt files
-    t{1} = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+    t{1} = loadTrajectory('Data/traj1', 'top', 'z', refNbIteration, 'nbInput',nbInput);
 end
+
+[train1, test] =  partitionTrajectory(t{1}, 1, nbData, refNbIteration);
 
 %plot recoverData
 drawRecoverData(t{1}, inputName);
@@ -58,26 +59,15 @@ promp{1} = computeDistribution(t{1}, nbFunctions, refNbIteration,center_gaussian
 %plot distribution
 drawDistribution(promp{1}, inputName,refNbIteration);
 
-%creation of a trajectory test
-test.traj = promp{1}.traj.y{5};
-test.trajM = promp{1}.traj.yMat{5};
-test.totTime = promp{1}.traj.totTime(5);
-test.alpha = refNbIteration / test.totTime;
-test.partialTraj = [];
-test.nbData = nbData;
-for i=1:sum(promp{1}.traj.nbInput)
-    test.partialTraj = [test.partialTraj; promp{1}.traj.yMat{3}(1:nbData,i)];
-end
-
 %%%test w_alpha model
-w = computeAlpha(nbData,t, nbInput);
+w = computeAlpha(test{1}.nbData,t, nbInput);
 promp{1}.w_alpha = w{1};
 
-[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,refNbIteration,center_gaussian,h,nbData, expNoise, 'MO');
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},nbFunctions,refNbIteration,center_gaussian,h,test{1}.nbData, expNoise, 'MO');
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, refNbIteration, center_gaussian, h, nbData, expNoise, alphaTraj);
+infTraj = inference(promp, test{1}, nbFunctions, refNbIteration, center_gaussian, h, test{1}.nbData, expNoise, alphaTraj);
 
 %draw the infered movement
-drawInference(promp,infTraj, test,refNbIteration)
+drawInference(promp,infTraj, test{1},refNbIteration)
 
 
