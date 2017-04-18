@@ -8,22 +8,22 @@
 close all;
 clearvars;
 warning('off','MATLAB:colon:nonIntegerIndex')
-addpath('used_functions');
+addpath('used_functions'); %add some fonctions we use.
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
-z=100;
+refTime=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
 
-nbFunctions(1) = 5; %number of basis functions
-nbFunctions(2) = 5; %number of basis functions for the second type of input (could require over forces).
+nbFunctions(1) = 5; %number of basis functions for the first type of input
+nbFunctions(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-nbData = 30; %number of data max with what you try to find the correct movement
+procentData = 35; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -39,19 +39,20 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('Data/traj1', 'top', 'referenceNumber', z, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t1 = loadTrajectory(nameDataTrajectories, 'top', 'referenceNumber', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
+
+%take one of the trajectory randomly to do test, the others are stocked in
+%train1.
+[train1,test1] = partitionTrajectory(t1,1,procentData,refTime);
 
 %plot recoverData
 drawRecoverData(t1, list, 'Specific');
 
-%compute the distribution for each kind of trajectories.
-%we define var and TotalTime in this function
-%here we need to define the bandwith of the gaussians h
-%computeDistributions_withCrossOver;
-promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
+%Compute the distribution for each kind of trajectories.
+promp{1} = computeDistribution(train1, nbFunctions, refTime,center_gaussian,h);
 
 %plot distribution
-drawDistribution(promp, list,z);
+drawDistribution(promp, list,refTime);
 
 trial = size(promp,1)+1;
 while (trial > size(promp,1) || trial < 1)
@@ -59,22 +60,16 @@ while (trial > size(promp,1) || trial < 1)
 end
 disp(['We try the number ', num2str(trial)]);
 
-%creation of a trajectory test
-test.traj = promp{trial}.traj.y{3};
-test.trajM = promp{trial}.traj.yMat{3};
-test.totTime = promp{trial}.traj.totTime(3);
-test.alpha = z / test.totTime;
-test.partialTraj = [];
-test.nbData = nbData;
-for i=1:sum(promp{trial}.traj.nbInput)
-    test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
-end
-
+test = test1;
+t{1} = t1;
+w = computeAlpha(test{1}.nbData,t, nbInput);
+promp{1}.w_alpha= w{1};
 
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},nbFunctions,refTime,center_gaussian,h,test{1}.nbData, expNoise, 'MO');
+infTraj = inference(promp, test{1}, nbFunctions, refTime, center_gaussian, h, test{1}.nbData, expNoise, alphaTraj);
 
 %draw the infered movement
-drawInference(promp,infTraj, test,z)
+drawInference(promp,infTraj, test{1},refTime)
 
 

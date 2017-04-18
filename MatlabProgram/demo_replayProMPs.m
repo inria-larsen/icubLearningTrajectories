@@ -13,27 +13,28 @@ addpath('used_functions');
 nameDataTrajectories = 'Data/traj1';
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
-z=100;
-nbInput(1) = 3; %input number used to the inference(here position)
-nbInput(2) = 6; %other inputs (here forces)
+refTime=100;
+nbInput(1) = 3; %number of input used during the inference (here cartesian position)
+nbInput(2) = 6; %other inputs (here forces and wrenches)
 
 nbFunctions(1) = 5; %number of basis functions for the first type of input
 nbFunctions(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-nbData = 30; %number of data with what you try to find the correct movement
+procentData = 30; %number of data with what you try to find the correct movement
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
-%some variable computation to create basis functions
-nbTotFunctions = 0;
+%some variable computation to create basis function, you might have to
+%change them
+nbTotFunctions = 0; 
 for i=1:size(nbFunctions,2)
     nbTotFunctions = nbTotFunctions + nbFunctions(i)*nbInput(i);
 end
 center_gaussian(1) = 1.0 / (nbFunctions(1));
 center_gaussian(2) = 1.0 / (nbFunctions(2));
-h(1) = center_gaussian(1)/5; %bandwidth of the gaussians
-h(2) = center_gaussian(1)/5;
+h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
+h(2) = center_gaussian(2)/nbFunctions(2);
 
 %information: 
 %port open: port(/matlab/write)
@@ -53,45 +54,41 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory(nameDataTrajectories7 'top', 'z', z, 'nbInput',nbInput);
+t{1} = loadTrajectory(nameDataTrajectories, 'top', 'referenceNumber', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
+
+%take one of the trajectory randomly to do test, the others are stocked in
+%train1.
+[train1,test1] = partitionTrajectory(t1,1,procentData,refTime);
 
 %Compute the distribution for each kind of trajectories.
-%we define var and TotalTime in this function
-%here we need to define the bandwith of the gaussians h
-promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
+promp{1} = computeDistribution(train1, nbFunctions, refTime,center_gaussian,h);
 
 i = size(promp,1)+1;
 while (i > size(promp,1) || i < 1)
     i = input(['Give the trajectory you want to replay (between 1 and ' num2str(size(promp,1)), ')']);
 end
 %This function replays the trajectory into gazebo.
-replayProMP(i, promp{1}, connection,z);
+replayProMP(i, promp{1}, connection,refTime);
 
 trial = size(promp,1)+1;
 while (trial > size(promp,1) || trial < 1)
     trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,1)),')']);
 end
-disp(['We try the number ', num2str(trial)])
+disp(['We try the number ', num2str(trial)]);
 
-%creation of a variable test
-test.traj = promp{trial}.traj.y{3};
-test.trajM = promp{trial}.traj.yMat{3}
-test.totTime = promp{trial}.traj.totTime(3);
-test.alpha = z / test.totTime;
-test.partialTraj = [];
-test.nbData = nbData;
-for i=1:sum(promp{trial}.traj.nbInput)
-    test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
-end
+test = test1;
+w = computeAlpha(test{1}.nbData,t, nbInput);
+promp{1}.w_alpha= w{1};
 
 %begin to play the first nbFirstData
 replayObservedData(test,connection);
 
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},nbFunctions,refTime,center_gaussian,h,test{1}.nbData, expNoise, 'MO');
+infTraj = inference(promp, test{1}, nbFunctions, refTime, center_gaussian, h, test{1}.nbData, expNoise, alphaTraj);
 
 %replay the movement into gazebo
-continueMovement(infTraj,connection, test.nbData,z, promp{1}.PSI_z,list);
+continueMovement(infTraj,connection, test.nbData,refTime, promp{1}.PSI_z,list);
 
 %close the port and the program replay.
 closeConnection(connection);

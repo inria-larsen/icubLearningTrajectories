@@ -8,7 +8,7 @@
 close all;
 clearvars;
 warning('off','MATLAB:colon:nonIntegerIndex');
-addpath('used_functions');
+addpath('./used_functions');
 
 
 %%%%%%%%%%%%%%%VARIABLES, please look at the README
@@ -26,7 +26,7 @@ nbFunctions(1) = 5; %number of basis functions to represent nbInput(1)
 %variable that you can tune to achieve the trajectory correctly: correspond
 %to the expected data noise
 expNoise = 0.00001;
-nbData = 60; %number of observed data during the inference
+nbData = 40; %number of observed data during the inference
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -42,38 +42,34 @@ h(1) = center_gaussian(1)/nbFunctions(1) %bandwidth of the gaussians
 
 if(strcmp(typeRecover,'.mat')==1)
     load(DataPath);
+    t{1} = t1;
 else
     %recover the data saved in the Data/trajX/recordY.txt files
-    t1 = loadTrajectory('Data/traj1', 'top', 'z', z, 'nbInput',nbInput);
+    t{1} = loadTrajectory('Data/traj1', 'top', 'z', refNbIteration, 'nbInput',nbInput);
 end
+[train1, test] =  partitionTrajectory(t{1}, 1, nbData, refNbIteration);
 
 %plot recoverData
-drawRecoverData(t1, inputName);
+drawRecoverData(t{1}, inputName);
 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
-promp{1} = computeDistribution(t1, nbFunctions, refNbIteration,center_gaussian,h);
+promp{1} = computeDistribution(t{1}, nbFunctions, refNbIteration,center_gaussian,h);
 
 %plot distribution
 drawDistribution(promp, inputName,refNbIteration);
 
-%creation of a trajectory test
-test.traj = promp{1}.traj.y{3};
-test.trajM = promp{1}.traj.yMat{3};
-test.totTime = promp{1}.traj.totTime(3);
-test.alpha = refNbIteration / test.totTime;
-test.partialTraj = [];
-test.nbData = nbData;
-for i=1:sum(promp{1}.traj.nbInput)
-    test.partialTraj = [test.partialTraj; promp{1}.traj.yMat{3}(1:nbData,i)];
-end
+%%%test w_alpha model
+w = computeAlpha(test{1}.nbData,t, nbInput);
+promp{1}.w_alpha = w{1};
 
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},nbFunctions,refNbIteration,center_gaussian,h,test{1}.nbData, expNoise, 'MO');
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, refNbIteration, center_gaussian, h, nbData, expNoise);
+infTraj = inference(promp, test{1}, nbFunctions, refNbIteration, center_gaussian, h, test{1}.nbData, expNoise, alphaTraj);
 
 %draw the infered movement
-drawInference(promp,infTraj, test,refNbIteration)
+drawInference(promp,infTraj, test{1},refNbIteration)
 
 
