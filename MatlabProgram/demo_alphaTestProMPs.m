@@ -51,19 +51,19 @@ h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
 h(2) = center_gaussian(2)/nbFunctions(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory('Data/Test_WBD/trajG1', 'Left', 'z', z, 'nbInput',nbInput);
-t2 = loadTrajectory('Data/Test_WBD/trajG2', 'Left', 'z', z, 'nbInput',nbInput);
+t{1} = loadTrajectory('Data/Test_WBD/trajG1', 'Left', 'z', z, 'nbInput',nbInput);
+t{2} = loadTrajectory('Data/Test_WBD/trajG2', 'Left', 'z', z, 'nbInput',nbInput);
 
 %plot recoverData
- drawRecoverData(t1, list);
- drawRecoverData(t2, list);
+ drawRecoverData(t{1}, list);
+ drawRecoverData(t{2}, list);
 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 %computeDistributions_withCrossOver;
-promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
-promp{2} = computeDistribution(t2, nbFunctions, z,center_gaussian,h);
+promp{1} = computeDistribution(t{1}, nbFunctions, z,center_gaussian,h);
+promp{2} = computeDistribution(t{2}, nbFunctions, z,center_gaussian,h);
 
 %plot distribution
 drawDistribution(promp{1}, list,z,[1:3]);
@@ -89,15 +89,10 @@ for i=1:promp{trial}.traj.nbInput(1)
     test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{5}(1:nbData,i)];
 end
 
-t{1} = t1;
-t{2} = t2;
 %%%test alpha computation from nbData
 w = computeAlpha(nbData,t, nbInput);
-promp{1}.w_alpha= w{1};
-promp{2}.w_alpha = w{2};
-
-%[promp{1}.w_alpha] = computeAlpha(nbData,t1);
-
+promp{1}.w_alpha = w{1};
+promp{2}.w_alpha = w{2}
 
 %Recognition of the movement
 [alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise, typeR);

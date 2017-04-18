@@ -1,60 +1,32 @@
-function w = computeAlpha(nbData,t,nbInput)
+function w_alpha = computeAlpha(nbData,t,nbInput)
 %computeAlpha is not finish yet.
 %It will allow to compute the link between the variation in the first
 %nbData and the alpha value.
-
-for tallT=1:length(t) % for all type of trajectories
-
-cpt=1;
-mask{tallT} = zeros(length(t{tallT}.yMat),1);
-for i=1:length(t{tallT}.yMat) %for all trajectory of type tallT
-    if(size(t{tallT}.yMat{i},1)>=nbData)
-        mask{tallT}(i) = 1;
-        t{tallT}.velVar(cpt,1:nbInput(1)) = abs(t{tallT}.yMat{i}(nbData,1:nbInput(1)) - t{tallT}.yMat{i}(1,1:nbInput(1))) ; 
-        cpt = cpt+1;
+mask = cell(length(t),1);
+RBF = cell(length(t),1);
+sizeNoise = cell(length(t),1);
+w_alpha = cell(length(t),1);
+for typeTraj=1:length(t) % for all type of trajectories
+    cpt=1;
+    mask{typeTraj} = zeros(length(t{typeTraj}.yMat),1);
+    for traj=1:length(t{typeTraj}.yMat) %for all trajectories of type typeTraj
+        %we compute the variation inputs between input(nbData) and input(1)
+        if(size(t{typeTraj}.yMat{traj},1)>=nbData) %if the trajectory is probable for the inference, we use it in the model.
+            mask{typeTraj}(traj) = 1;
+            t{typeTraj}.velVar(cpt,1:nbInput(1)) = abs(t{typeTraj}.yMat{traj}(nbData,1:nbInput(1)) - t{typeTraj}.yMat{traj}(1,1:nbInput(1)));
+            cpt = cpt+1;
+        end
     end
-end
-% cpt=1;
-% mask2 = zeros(length(t2.yMat),1);
-% for i=1:length(t2.yMat)
-%     if(size(t2.yMat{i},1)>=nbData) 
-%         mask2(i) = 1;
-%         t2.velVar(cpt,:) = abs(t2.yMat{i}(nbData,1:3) - t2.yMat{i}(1,1:3)) ;  
-%         cpt = cpt+1;
-%     end
-% end
-% cpt=1;
-% mask3 = zeros(length(t3.yMat),1);
-% for i=1:length(t3.yMat)
-%     if(size(t3.yMat{i},1)>=nbData) 
-%         mask3(i) = 1;
-%         t3.velVar(cpt,:) = abs(t3.yMat{i}(nbData,1:3) - t3.yMat{i}(1,1:3)) ;  
-%         cpt = cpt+1;
-%     end
-% end
 
-% min(t1.velVar)
-% min(t2.velVar)
-% min(t3.velVar)
-% 
-% 
-% max(t1.velVar)
-% max(t2.velVar)
-% max(t3.velVar)
+    RBF{typeTraj} = AlphaBasis(t{typeTraj}.velVar);
 
+    sizeNoise{typeTraj} = size(RBF{typeTraj}'*RBF{typeTraj});
 
-basis{tallT} = AlphaBasis(t{tallT}.velVar);
-% basis2 = AlphaBasis(t2.velVar);
-% basis3 = AlphaBasis(t3.velVar);
-
-sizeNoise{tallT} = size(basis{tallT}'*basis{tallT});
-% sizeNoise2 = size(basis2'*basis2);
-% sizeNoise3 = size(basis3'*basis3);
-
-w{tallT} = (basis{tallT}'*basis{tallT}+1e-12*eye(sizeNoise{tallT})) \ (basis{tallT})' *t{tallT}.alpha(logical(mask{tallT}))';        
-% w2 = (basis2'*basis2+1e-12*eye(sizeNoise2)) \ (basis2)' *t2.alpha(logical(mask2))';        
-% w3 = (basis3'*basis3+1e-12*eye(sizeNoise3)) \ (basis3)' *t3.alpha(logical(mask3))';        
+    w_alpha{typeTraj} =  (RBF{typeTraj}'*RBF{typeTraj}+1e-12*eye(sizeNoise{typeTraj})) \ (RBF{typeTraj})' *t{typeTraj}.alpha(logical(mask{typeTraj}))';        
+        
 end 
+
+%%%FOR DEBUGGING PURPOSE:
 % % %%%draw_results
 % %subplot(2,3,1);
 % hold on;

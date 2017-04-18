@@ -1,33 +1,28 @@
-function vall = AlphaBasis(x)
-%AlphaBasis is not finish yet, will allow to compute Basis function 
-%to modelize the alpha value according to the position variation of the
-%data
+function RBF = AlphaBasis(x)
+%AlphaBasis is not finish yet, will allow to compute Basis functions 
+%to model the alpha value according to the input variation.
+%INPUT:
+%x: all the variation inputs for each trajectory
+%OUTPUT:
+%RBF the RBF of the alpha model.
 
-    vall = [];
-    for j=1:size(x,2)
-        val{j}= zeros(size(x,1),5);
-    %valy= zeros(size(x,1),5);
-    %valz= zeros(size(x,1),5);
-        for n=1:size(x,1) %nbData 
-            for i=1:5 %5 rbf from -0.5 to 0.5 in 3D
+    RBF = [];
+    Phi = cell(size(x,2));
+    for traj=1:size(x,2) %for each trajectory
+        Phi{traj}= zeros(size(x,1),5);
+        for t=1:size(x,1) %nbData 
+            %TODO put as much RBF as we want.
+            for i=1:5 %5 RBF from -0.5 to 0.5 in 3D
                 c =  0.012*(i-1);
-                if(isnan(x(n)))
-                    val{j}(n,i) = 0;
-                   % valy(n,i) = 0;
-                   % valz(n,i) = 0;
+                if(isnan(x(t)))
+                    Phi{traj}(t,i) = 0;
                 else
-                    val{j}(n,i) = exp(-power(x(n,j)' - c,2) /sqrt(0.2));            
-                   % valy(n,i) = exp(-power(x(n,2)' - c,2) /sqrt(0.2));
-                   % valz(n,i) = exp(-power(x(n,3)' - c,2) /sqrt(0.2));
+                    Phi{traj}(t,i) = exp(-power(x(t,traj)' - c,2) /sqrt(0.2));            
                 end
             end
-                sumBI = sum(val{j}(n,:));
-                val{j}(n,:) = val{j}(n,:)/sumBI;
-%                 sumBI = sum(valy(n,:));
-%                 valy(n,:) = valy(n,:)/sumBI;
-%                 sumBI = sum(valz(n,:));
-%                 valz(n,:) = valz(n,:)/sumBI;
+                sumBI = sum(Phi{traj}(t,:));
+                Phi{traj}(t,:) = Phi{traj}(t,:)/sumBI;
         end
-            vall = [vall,val{j}];
+            RBF = [RBF,Phi{traj}];
     end
 end
