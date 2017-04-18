@@ -10,7 +10,7 @@ nameFig = figure;
 
 for vff=1:nbInput(1)
     subplot(nbInput(1),1,vff);
-    nameFig = visualisation2(test.traj,sum(nbInput), test.totTime,vff, ':m', z / test.totTime, nameFig);hold on;
+    nameFig = visualisation2(test.y,sum(nbInput), test.totTime,vff, ':m', z / test.totTime, nameFig);hold on;
     dtG = size(nameFig,2);
     nameFig(size(nameFig,2) + 1) = plot(test.partialTraj(1+ test.nbData*(vff-1):(infTraj.timeInf/z):test.nbData + test.nbData*(vff-1)),'om','linewidth',2);
     dnG = size(nameFig,2);
