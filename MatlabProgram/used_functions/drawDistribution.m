@@ -1,6 +1,5 @@
 function drawDistribution(promp, list,z, varargin)
 %DRAWDISTRIBUTION draws the learned distribution
-
 set(0,'DefaultLineLinewidth',1)
 set(0,'DefaultAxesFontSize',12)
 
@@ -12,7 +11,7 @@ else
     interval = [1:nbInputs];
 end
     
-    fig =figure;
+    fig =figure('units','normalized','outerposition',[0 0 1 1]);
     for j=interval
            subplot(ceil(nbInputs/2),2,j);
             for k = 1 : promp.traj.nbTraj

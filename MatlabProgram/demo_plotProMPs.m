@@ -53,7 +53,7 @@ promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
 promp{2} = computeDistribution(t2, nbFunctions, z,center_gaussian,h);
 
 %plot distribution
-drawDistribution(promp{1}, list,z);
+drawDistribution(promp{1}, list,z, [1:3]);
 
 trial = size(promp,2)+1;
 while (trial > size(promp,2) || trial < 1)
