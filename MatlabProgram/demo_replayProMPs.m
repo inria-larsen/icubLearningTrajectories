@@ -52,12 +52,16 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t1 = loadTrajectory(nameDataTrajectories, 'top', 'z', z, 'nbInput',nbInput);
+t1 = loadTrajectory('Data/bas', 'bottom', 'z', z, 'nbInput',nbInput);
+t2 = loadTrajectory('Data/haut', 'top', 'z', z, 'nbInput',nbInput);
+t3 = loadTrajectory('Data/milieu', 'middle', 'z', z, 'nbInput',nbInput);
 
 %Compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
 %here we need to define the bandwith of the gaussians h
 promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
+promp{2} = computeDistribution(t2, nbFunctions, z,center_gaussian,h);
+promp{3} = computeDistribution(t3, nbFunctions, z,center_gaussian,h);
 
 i = size(promp,1)+1;
 while (i > size(promp,1) || i < 1)
@@ -86,8 +90,21 @@ end
 %begin to play the first nbFirstData
 replayObservedData(test,connection);
 
+
+%%%test alpha computation from nbData
+t{1} = t1;
+t{2} = t2;
+t{3} = t3;
+w = computeAlpha(nbData,t, nbInput);
+promp{1}.w_alpha= w{1};
+promp{2}.w_alpha = w{2};
+promp{3}.w_alpha = w{3};
+
 %Recognition of the movement
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise);
+[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise, 'MO');
+
+%Recognition of the movement
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise,alphaTraj);
 
 %replay the movement into gazebo
 continueMovement(infTraj,connection, test.nbData,z, promp{1}.PSI_z,list);

@@ -15,7 +15,7 @@ end
 if(isa(col1, 'char'))
     %for i=1:x
      i=z;
-      h=  shadedErrorBar([1:1:size(meanV(i,:),2)],meanV(i,:),stdV(i,:),col1, 0.01); hold on;
+       shadedErrorBar([1:1:size(meanV(i,:),2)],meanV(i,:),stdV(i,:),col1, 0.01); hold on;
 
 else
     %for i=1:x 

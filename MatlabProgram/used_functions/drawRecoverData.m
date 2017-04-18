@@ -2,7 +2,6 @@ function drawRecoverData(traj, list)
 
 set(0,'DefaultLineLinewidth',1);
 set(0,'DefaultAxesFontSize',12);
-
 %TODO mieux
 if(length(traj) ==2) %2traj
     fig22 = figure;
@@ -76,10 +75,10 @@ totInput = sum(traj.nbInput)
              end
         end
               
-        %Here we plot the cartesian position
+        %Here we plot the other information
         fig22 = figure;
         for l=traj.nbInput(1)+1:totInput  
-            subplot(nbDofTot - traj.nbInput(1),1,l)
+            subplot(totInput - traj.nbInput(1),1,l-traj.nbInput(1))
             for i=1:traj.nbTraj     
                 fig22 = visualisation(traj.y{i},sum(traj.nbInput),traj.totTime(i), l, ':b',fig22,traj.realTime{i});hold on;
             end

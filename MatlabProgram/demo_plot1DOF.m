@@ -56,7 +56,7 @@ drawRecoverData(t{1}, inputName);
 promp{1} = computeDistribution(t{1}, nbFunctions, refNbIteration,center_gaussian,h);
 
 %plot distribution
-drawDistribution(promp, inputName,refNbIteration);
+drawDistribution(promp{1}, inputName,refNbIteration);
 
 %creation of a trajectory test
 test.traj = promp{1}.traj.y{5};
@@ -70,7 +70,7 @@ for i=1:sum(promp{1}.traj.nbInput)
 end
 
 %%%test w_alpha model
-w = computeAlpha(nbData,t{1}, nbInput);
+w = computeAlpha(nbData,t, nbInput);
 promp{1}.w_alpha = w{1};
 
 [alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,refNbIteration,center_gaussian,h,nbData, expNoise, 'MO');

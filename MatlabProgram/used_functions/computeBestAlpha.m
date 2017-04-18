@@ -1,4 +1,4 @@
-function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nbInput, nbFunctions, nbData,z,center_gaussian,h, type)
+function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nbInput, nbFunctions, nbData,refTime,center_gaussian,h, type)
 %COmpute the best alpha in one kind of trajectory in the set of observed
 %alphas during learing.
 %INPUTS:
@@ -30,25 +30,29 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nb
     value = NaN;
     xest = NaN;
     
- if(type == 'MO')%Model: on test pas tous les alphai
-    velValr = abs(newTraj.trajM(nbData,1:nbInput(1))  - newTraj.trajM(1,1:nbInput(1)));
-    basis = AlphaBasis(velValr);
+ if(type == 'MO')%Model: we don't tes all the alpha i
+    variation = abs(newTraj.trajM(nbData,1:nbInput(1))  - newTraj.trajM(1,1:nbInput(1)));
+    basis = AlphaBasis(variation);
     value  = basis*ProMP.w_alpha;
     mu_w_coord = ProMP.mu_w(1:nbInput(1)*nbFunctions(1));
-    sigma_w_coord = ProMP.sigma_w(1:nbInput(1)*nbFunctions(1),1:nbInput(1)*nbFunctions(1));
-    PSI_coor = computeBasisFunction(z,nbFunctions(1), nbInput(1), value , floor(z/value ), center_gaussian(1), h(1), nbData,center_gaussian);
-    umax = PSI_coor*mu_w_coord;
-    sigmax = expNoise*eye(size(umax,1));
-    [bestproba,x] = mesureDiff('ML', umax, sigmax, newTraj.partialTraj, nbData, nbInput(1));
-    xest=x;
+%    sigma_w_coord = ProMP.sigma_w(1:nbInput(1)*nbFunctions(1),1:nbInput(1)*nbFunctions(1));
+    if(floor(refTime/value )<nbData) %the model found a too long trajectory, we force the trajectory to spend as least nbData sample times
+        value = refTime /nbData;
+    end
+        
+        PSI_coor = computeBasisFunction(refTime,nbFunctions(1), nbInput(1), value , floor(refTime/value ), center_gaussian(1), h(1), nbData,center_gaussian);
+        umax = PSI_coor*mu_w_coord;
+        sigmax = expNoise*eye(size(umax,1));
+        [bestproba,x] = mesureDiff('ML', umax, sigmax, newTraj.partialTraj, nbData, nbInput(1));
+        xest=x;
  else
  
     for i=1:length(ProMP.traj.alpha)
-        if(floor(z/ProMP.traj.alpha(i)) < nbData)
+        if(floor(refTime/ProMP.traj.alpha(i)) < nbData)
             display(['Cannot take into account', num2str(i), 'th trajectory (not enougth data)']);
             %continue;
         else
-            PSI_coor{i} = computeBasisFunction(z,nbFunctions(1), nbInput(1), ProMP.traj.alpha(i), floor(z/ProMP.traj.alpha(i)), center_gaussian(1), h(1), nbData,center_gaussian);
+            PSI_coor{i} = computeBasisFunction(refTime,nbFunctions(1), nbInput(1), ProMP.traj.alpha(i), floor(refTime/ProMP.traj.alpha(i)), center_gaussian(1), h(1), nbData,center_gaussian);
             %we compute the learned distribution trajectory of cartesian position
     %         for t=1:nbData
     %         u{t} = PSI_coor{i}{t}*mu_w_coord;

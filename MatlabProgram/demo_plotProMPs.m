@@ -21,7 +21,7 @@ nbFunctions(2) = 5; %number of basis functions for the second type of input (cou
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-nbData = 30; %number of data max with what you try to find the correct movement
+procentData = 35; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -39,13 +39,11 @@ h(2) = center_gaussian(2)/nbFunctions(2);
 %recover the data saved in the Data/trajX/recordY.txt files
 t1 = loadTrajectory('Data/bas', 'bottom', 'z', z, 'nbInput',nbInput);
 t2 = loadTrajectory('Data/haut', 'top', 'z', z, 'nbInput',nbInput);
-t3 = loadTrajectory('Data/milieu', 'middle', 'z', z, 'nbInput',nbInput);
 
 
 %plot recoverData
  drawRecoverData(t1, list);
 %  drawRecoverData(t2, list);
-%  drawRecoverData(t3, list);
 
 %compute the distribution for each kind of trajectories.
 %we define var and TotalTime in this function
@@ -53,7 +51,6 @@ t3 = loadTrajectory('Data/milieu', 'middle', 'z', z, 'nbInput',nbInput);
 %computeDistributions_withCrossOver;
 promp{1} = computeDistribution(t1, nbFunctions, z,center_gaussian,h);
 promp{2} = computeDistribution(t2, nbFunctions, z,center_gaussian,h);
-promp{3} = computeDistribution(t3, nbFunctions, z,center_gaussian,h);
 
 %plot distribution
 drawDistribution(promp{1}, list,z);
@@ -70,25 +67,22 @@ test.trajM = promp{trial}.traj.yMat{3};
 test.totTime = promp{trial}.traj.totTime(3);
 test.alpha = z / test.totTime;
 test.partialTraj = [];
-test.nbData = nbData;
+test.nbData = ceil((procentData/100)*promp{trial}.traj.totTime(3));
 for i=1:promp{trial}.traj.nbInput(1)
-    test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:nbData,i)];
+    test.partialTraj = [test.partialTraj; promp{trial}.traj.yMat{3}(1:test.nbData,i)];
 end
 
 %%%test alpha computation from nbData
-
 t{1} = t1;
 t{2} = t2;
-t{3} = t3;
-w = computeAlpha(nbData,t, nbInput);
+w = computeAlpha(test.nbData,t, nbInput);
 promp{1}.w_alpha= w{1};
 promp{2}.w_alpha = w{2};
-promp{3}.w_alpha = w{3};
 
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,nbData, expNoise, 'MO');
+[alphaTraj,type, x] = inferenceAlpha(promp,test,nbFunctions,z,center_gaussian,h,test.nbData, expNoise, 'MO');
 
-infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, nbData, expNoise, alphaTraj);
+infTraj = inference(promp, test, nbFunctions, z, center_gaussian, h, test.nbData, expNoise, alphaTraj);
 %%
 %draw the infered movement
 drawInference(promp,infTraj, test,z)
