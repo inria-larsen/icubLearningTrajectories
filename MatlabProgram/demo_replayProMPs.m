@@ -10,15 +10,15 @@ clearvars;
 addpath('used_functions');
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
-nameDataTrajectories = 'Data/traj1';
-list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
+DataPath = 'Data/traj1';
+inputName = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
 refTime=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
 
-nbFunctions(1) = 5; %number of basis functions for the first type of input
-nbFunctions(2) = 5; %number of basis functions for the second type of input
+M(1) = 5; %number of basis functions for the first type of input
+M(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
@@ -27,14 +27,14 @@ procentData = 30; %number of data with what you try to find the correct movement
 
 %some variable computation to create basis function, you might have to
 %change them
-nbTotFunctions = 0; 
-for i=1:size(nbFunctions,2)
-    nbTotFunctions = nbTotFunctions + nbFunctions(i)*nbInput(i);
+dimRBF = 0; 
+for i=1:size(M,2)
+    dimRBF = dimRBF + M(i)*nbInput(i);
 end
-center_gaussian(1) = 1.0 / (nbFunctions(1));
-center_gaussian(2) = 1.0 / (nbFunctions(2));
-h(1) = center_gaussian(1)/nbFunctions(1); %bandwidth of the gaussians
-h(2) = center_gaussian(2)/nbFunctions(2);
+c(1) = 1.0 / (M(1));%center of gaussians
+c(2) = 1.0 / (M(2));
+h(1) = c(1)/M(1); %bandwidth of gaussians
+h(2) = c(2)/M(2);
 
 %information: 
 %port open: port(/matlab/write)
@@ -54,14 +54,14 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t{1} = loadTrajectory(nameDataTrajectories, 'top', 'referenceNumber', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{1} = loadTrajectory(DataPath, 'top', 'refNb', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %take one of the trajectory randomly to do test, the others are stocked in
 %train1.
-[train1,test1] = partitionTrajectory(t1,1,procentData,refTime);
+[train1,test] = partitionTrajectory(t1,1,procentData,refTime);
 
 %Compute the distribution for each kind of trajectories.
-promp{1} = computeDistribution(train1, nbFunctions, refTime,center_gaussian,h);
+promp{1} = computeDistribution(train1, M, refTime,c,h);
 
 i = size(promp,1)+1;
 while (i > size(promp,1) || i < 1)
@@ -76,7 +76,6 @@ while (trial > size(promp,1) || trial < 1)
 end
 disp(['We try the number ', num2str(trial)]);
 
-test = test1;
 w = computeAlpha(test{1}.nbData,t, nbInput);
 promp{1}.w_alpha= w{1};
 
@@ -84,11 +83,11 @@ promp{1}.w_alpha= w{1};
 replayObservedData(test,connection);
 
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAlpha(promp,test{1},nbFunctions,refTime,center_gaussian,h,test{1}.nbData, expNoise, 'MO');
-infTraj = inference(promp, test{1}, nbFunctions, refTime, center_gaussian, h, test{1}.nbData, expNoise, alphaTraj);
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,refTime,c,h,test{1}.nbData, expNoise, 'MO');
+infTraj = inference(promp, test{1}, M, refTime, c, h, test{1}.nbData, expNoise, alphaTraj);
 
 %replay the movement into gazebo
-continueMovement(infTraj,connection, test.nbData,refTime, promp{1}.PSI_z,list);
+continueMovement(infTraj,connection, test.nbData,refTime, promp{1}.PSI_z,inputName);
 
 %close the port and the program replay.
 closeConnection(connection);

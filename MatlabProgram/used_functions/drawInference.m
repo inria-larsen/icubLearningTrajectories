@@ -1,4 +1,4 @@
-function drawInference(promp, infTraj, test,z)
+function drawInference(promp, infTraj, test,s_ref)
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 
 nbInput = promp{1}.traj.nbInput;
@@ -10,17 +10,17 @@ nameFig = figure;
 
 for vff=1:nbInput(1)
     subplot(nbInput(1),1,vff);
-    nameFig = visualisation2(test.y,sum(nbInput), test.totTime,vff, ':m', z / test.totTime, nameFig);hold on;
+    nameFig = visualisation2(test.y,sum(nbInput), test.totTime,vff, ':m', s_ref / test.totTime, nameFig);hold on;
     dtG = size(nameFig,2);
-    nameFig(size(nameFig,2) + 1) = plot(test.partialTraj(1+ test.nbData*(vff-1):(infTraj.timeInf/z):test.nbData + test.nbData*(vff-1)),'om','linewidth',2);
+    nameFig(size(nameFig,2) + 1) = plot(test.partialTraj(1+ test.nbData*(vff-1):(infTraj.timeInf/s_ref):test.nbData + test.nbData*(vff-1)),'om','linewidth',2);
     dnG = size(nameFig,2);
 
     i = infTraj.reco;%reco{1};
-    visualisationShared(promp{i}.PSI_z*promp{i}.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(promp{i}.sigma_w )), sum(nbInput), z,  vff, 'b', nameFig);
-    nameFig = visualisation(promp{i}.PSI_z*promp{i}.mu_w, sum(nbInput), z, vff, 'b', nameFig);
+    visualisationShared(promp{i}.PHI_z*promp{i}.mu_w, promp{i}.PHI_z*1.96*sqrt(diag(promp{i}.sigma_w )), sum(nbInput), s_ref,  vff, 'b', nameFig);
+    nameFig = visualisation(promp{i}.PHI_z*promp{i}.mu_w, sum(nbInput), s_ref, vff, 'b', nameFig);
     prevG = size(nameFig,2);
-    visualisationShared(promp{i}.PSI_z*infTraj.mu_w, promp{i}.PSI_z*1.96*sqrt(diag(infTraj.sigma_w)), sum(nbInput), z,  vff, 'g', nameFig);
-    nameFig = visualisation(promp{i}.PSI_z*infTraj.mu_w, sum(nbInput), z, vff,'g', nameFig);
+    visualisationShared(promp{i}.PHI_z*infTraj.mu_w, promp{i}.PHI_z*1.96*sqrt(diag(infTraj.sigma_w)), sum(nbInput), s_ref,  vff, 'g', nameFig);
+    nameFig = visualisation(promp{i}.PHI_z*infTraj.mu_w, sum(nbInput), s_ref, vff,'g', nameFig);
     newG = size(nameFig,2);
            ylabel(list{vff}, 'fontsize', 24);
          

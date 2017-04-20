@@ -27,7 +27,7 @@
     nbInput=-1;
     %Treat varargin possibilities
     for j=1:2:length(varargin)
-        if(strcmp(varargin{j},'referenceNumber')==1)
+        if(strcmp(varargin{j},'refNb')==1)
                 referenceNumber = varargin{j+1};
                 display(['Specification: reference number=', num2str(referenceNumber)]);
         elseif(strcmp(varargin{j},'nbInput')==1)

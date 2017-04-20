@@ -1,13 +1,13 @@
-function [train, test] = partitionTrajectory(t, procent, procentData, refTime)
+function [train, test] = partitionTrajectory(t, percent, procentData, refTime)
 %PARTITIONTRAJECTORY allows to partition the trajectories sample for training and
 %test
 %INPUT:
 %t: trajectories object
-%procent: number of procent of the training data set; 
-%or if procent==1: only one test
+%procent: number of percent of the training data set; 
+%or if percent==1: only one test
 
-if(procent==1)%want only one test 
-    ind = ceil(rand(1)*t.nbTraj)
+if(percent==1)%want only one test 
+    ind = 1%ceil(rand(1)*t.nbTraj)
     test{1}.y = t.y{ind}
     test{1}.yMat = t.yMat{ind};
     test{1}.totTime = t.totTime(ind);
@@ -36,7 +36,7 @@ if(procent==1)%want only one test
     end
     
 else
-     nbTrain = ceil((procent/100)*t.nbTraj)
+     nbTrain = ceil((percent/100)*t.nbTraj)
      nbTest = t.nbTraj - nbTrain;
      test.nbTraj = nbTest;
      train.nbTraj = nbTrain;

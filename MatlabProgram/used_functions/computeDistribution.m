@@ -1,17 +1,17 @@
-function promp = computeDistribution(traj, nbFunctions, z,center_gaussian,h)
+function promp = computeDistribution(traj, M, s_ref,c,h)
 %COMPUTEDISTRIBUTION
 %This function computes the distribution for each kind of trajectory.
   
     promp.traj = traj;
    %for each trajectory
     for j = 1:traj.nbTraj 
-        %we compute the corresponding PSI matrix
-         promp.PSI{j} = computeBasisFunction (z,nbFunctions, promp.traj.nbInput, promp.traj.alpha(j), promp.traj.totTime(j), center_gaussian, h, promp.traj.totTime(j));
+        %we compute the corresponding PHI matrix
+         promp.PHI{j} = computeBasisFunction (s_ref,M, promp.traj.nbInput, promp.traj.alpha(j), promp.traj.totTime(j), c, h, promp.traj.totTime(j));
     end
     promp.mu_alpha = mean(promp.traj.alpha);
     promp.sigma_alpha = cov(promp.traj.alpha);
 
-    promp.PSI_z = computeBasisFunction (z,nbFunctions,promp.traj.nbInput, 1, z,center_gaussian,h, z);
+    promp.PHI_z = computeBasisFunction (s_ref,M,promp.traj.nbInput, 1, s_ref,c,h, s_ref);
 
 %     val = 0;
 %     for cpt =1:size(promp.traj.nbInput,2)
@@ -21,14 +21,14 @@ function promp = computeDistribution(traj, nbFunctions, z,center_gaussian,h)
     for j = 1 : promp.traj.nbTraj
         %resolve a little bug
         sizeY  = size(promp.traj.y{j},1);
-        if(sizeY ~= size(promp.PSI{j},1))
+        if(sizeY ~= size(promp.PHI{j},1))
             promp.traj.y{j} = promp.traj.y{j}(1:sizeY-(sum(promp.traj.nbInput)));
             promp.traj.totTime(j) = promp.traj.totTime(j) -sum(promp.traj.nbInput);
-            promp.traj.alpha(j) = z /promp.traj.totTime(j);
+            promp.traj.alpha(j) = s_ref /promp.traj.totTime(j);
         end
-       sizeNoise = size(promp.PSI{j}'*promp.PSI{j});
+       sizeNoise = size(promp.PHI{j}'*promp.PHI{j});
        %Least square
-        w(j,:) = (promp.PSI{j}'*promp.PSI{j}+1e-12*eye(sizeNoise)) \ promp.PSI{j}' * promp.traj.y{j};        
+        w(j,:) = (promp.PHI{j}'*promp.PHI{j}+1e-12*eye(sizeNoise)) \ promp.PHI{j}' * promp.traj.y{j};        
         listw(j,:) =w(j,:); 
 
     end

@@ -1,4 +1,4 @@
-function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nbInputs, nbFunctions, nbData,refTime,center_gaussian,h, type)
+function [value,bestproba, xest] = computeBestAlpha(ProMP, obsTraj, expNoise, nbInputs, M, nbData,refTime,c,h, type)
 %computeBestAlpha computes the best alpha in one kind of trajectory in the set of observed alphas during learing.
 %
 %INPUTS:
@@ -18,8 +18,8 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nb
     
     %we retrieve the learned distribution trajectory of the input used for
     %inference (example: cartesian position)
-    mu_w_reco = ProMP.mu_w(1:nbInputs(1)*nbFunctions(1));
-    sigma_w_reco = ProMP.sigma_w(1:nbInputs(1)*nbFunctions(1),1:nbInputs(1)*nbFunctions(1));
+    mu_w_reco = ProMP.mu_w(1:nbInputs(1)*M(1));
+    sigma_w_reco = ProMP.sigma_w(1:nbInputs(1)*M(1),1:nbInputs(1)*M(1));
     
     %initialization
     bestproba = -Inf;
@@ -34,7 +34,7 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nb
      if(type == 'MO')%Model: we compute THE alpha that correspond to the learned alpha model.
         
         %computes the expected alpha using the model
-        variation = abs(newTraj.yMat(nbData,1:nbInputs(1))  - newTraj.yMat(1,1:nbInputs(1)));
+        variation = abs(obsTraj.yMat(nbData,1:nbInputs(1))  - obsTraj.yMat(1,1:nbInputs(1)));
         basis = AlphaBasis(variation);
         value  = basis*ProMP.w_alpha;
         if(floor(refTime / value )<nbData) %if the model found a too short alpha phasis, we force the trajectory to spend as least nbData sample times
@@ -42,10 +42,10 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nb
         end
         
         %computes the maximum likelihood that this alpha with this ProMP corresponds to the observed trajectory 
-        PSI_reco = computeBasisFunction(refTime,nbFunctions(1), nbInputs(1), value , floor(refTime/value ), center_gaussian(1), h(1), nbData,center_gaussian);
-        umax = PSI_reco*mu_w_reco;
+        PHI_reco = computeBasisFunction(refTime,M(1), nbInputs(1), value , floor(refTime/value ), c(1), h(1), nbData,c);
+        umax = PHI_reco*mu_w_reco;
         sigmax = expNoise*eye(size(umax,1));
-        [bestproba,x] = mesureDiff('ML', umax, sigmax, newTraj.partialTraj, nbData, nbInputs(1)); %mesure of the error using Maximum Likelihood
+        [bestproba,x] = mesureDiff('ML', umax, sigmax, obsTraj.partialTraj, nbData, nbInputs(1)); %mesure of the error using Maximum Likelihood
         xest=x; %keep offset information used.
      else
 
@@ -53,12 +53,12 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, newTraj, expNoise, nb
             if(floor(refTime/ProMP.traj.alpha(i)) < nbData) % we look if the alpha phasis is not too short (expected trajectory length < nbData)
                 display(['Cannot take into account', num2str(i), 'th trajectory (not enougth data)']);
             else
-                PSI_reco{i} = computeBasisFunction(refTime,nbFunctions(1), nbInputs(1), ProMP.traj.alpha(i), floor(refTime/ProMP.traj.alpha(i)), center_gaussian(1), h(1), nbData,center_gaussian);    
-                traj_mean = PSI_reco{i}*mu_w_reco;
-                %sig = PSI_reco{i}*1.96*sqrt(diag(sigma_w_reco));
+                PHI_reco{i} = computeBasisFunction(refTime,M(1), nbInputs(1), ProMP.traj.alpha(i), floor(refTime/ProMP.traj.alpha(i)), c(1), h(1), nbData,c);    
+                traj_mean = PHI_reco{i}*mu_w_reco;
+                %sig = PHI_reco{i}*1.96*sqrt(diag(sigma_w_reco));
                 % from a Probabilistic Approach to Robot Trajectory Generation + book pattern reco:
                 traj_var = expNoise*eye(size(traj_mean,1));
-                [proba(i,1),x] = mesureDiff(type, traj_mean, traj_var, newTraj.partialTraj, nbData, nbInputs(1));%mesure of the error using the type "type"
+                [proba(i,1),x] = mesureDiff(type, traj_mean, traj_var, obsTraj.partialTraj, nbData, nbInputs(1));%mesure of the error using the type "type"
                 proba(i,2)=ProMP.traj.alpha(i); %save alpha value information
 
                 if(proba(i,1) > bestproba)

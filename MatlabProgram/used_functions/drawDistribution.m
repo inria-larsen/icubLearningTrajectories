@@ -1,4 +1,4 @@
-function drawDistribution(promp, list,z)
+function drawDistribution(promp, list,s_ref)
 %DRAWDISTRIBUTION 
 %draw the distribution learned   	
 
@@ -14,8 +14,8 @@ set(0,'DefaultAxesFontSize',12)
             end
             datG = size(fig,2);
             
-            fig = visualisationShared(promp{1}.PSI_z*promp{1}.mu_w, promp{1}.PSI_z*1.96*sqrt(diag(promp{1}.sigma_w )), sum(promp{1}.traj.nbInput), z,  i, 'g', fig);
-            fig = visualisation(promp{1}.PSI_z*promp{1}.mu_w, sum(promp{1}.traj.nbInput), z,  i, 'g', fig);
+            fig = visualisationShared(promp{1}.PHI_z*promp{1}.mu_w, promp{1}.PHI_z*1.96*sqrt(diag(promp{1}.sigma_w )), sum(promp{1}.traj.nbInput), s_ref,  i, 'g', fig);
+            fig = visualisation(promp{1}.PHI_z*promp{1}.mu_w, sum(promp{1}.traj.nbInput), s_ref,  i, 'g', fig);
             set(gca, 'fontsize', 20);
             disG = size(fig,2);
             ylabel(list{i}, 'fontsize', 24);
