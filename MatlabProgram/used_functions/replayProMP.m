@@ -1,13 +1,13 @@
 
-function replayProMP(i, proMP, connection,z)
+function replayProMP(i, ProMP, connection,s_bar)
 %In this function we will play the trajectory into gazebo.
 
-data = proMP.PSI_z*proMP.mu_w;
+data = ProMP.PHI_z*ProMP.mu_w;
 
-    for t = 1 : z
+    for t = 1 : s_bar
         connection.b.clear();
-        for i = 1 : proMP.traj.nbInput %+ nbDof(2)
-            val(t,i) = data(z*(i-1)+t);
+        for i = 1 : ProMP.traj.nbInput %+ nbDof(2)
+            val(t,i) = data(s_bar*(i-1)+t);
             connection.b.addDouble(val(t,i));
         end
         %compliance information

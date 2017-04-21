@@ -40,17 +40,45 @@
         <name>recordTrajectoriesWithGeomagic</name>
         <parameters></parameters>
            <dependencies>
+            <port timeout="10">/matlab/write</port>
+        </dependencies>
+        <stdio>icub01</stdio>
+        <node>icub01</node>
+    </module>
+    
+  <module>  
+   <name>replayTrajectoriesWithGeomagic</name>
+        <parameters></parameters>
+           <dependencies>
             <port timeout="10">/simCartesianControl/left_arm/command:o</port>
         </dependencies>
         <stdio>icub01</stdio>
         <node>icub01</node>
     </module>
 
-
     <connection>
           <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
           <to>/record/read</to>
           <protocol>udp</protocol>
     </connection>
+
+    <connection>
+          <from>/matlab/write</from>
+          <to>/replay/read</to>
+          <protocol>udp</protocol>
+    </connection>
+    
+    
+    <connection>
+          <from>/replay/read</from>
+          <to>/matlab/write</to>
+          <protocol>udp</protocol>
+    </connection>
+    <connection>
+          <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
+          <to>/replay/readForces</to>
+          <protocol>udp</protocol>
+    </connection>
+    
 
 </application>

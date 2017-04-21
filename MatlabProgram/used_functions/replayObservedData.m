@@ -7,7 +7,7 @@ for t = 1 : newTraj.nbData
     connection.b.clear();
      for i = 1 : 3 %cartesianPosition of the robot
 %         val(t,i) = newTraj.traj. data(totalTimeTrial(trial)*(i-1)+t);
-         connection.b.addDouble(newTraj.trajM(t,i));   %val(t,i));
+         connection.b.addDouble(newTraj.yMat(t,i));   %val(t,i));
      end
     connection.port.write(connection.b);
     connection.port.read(connection.c);

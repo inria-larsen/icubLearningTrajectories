@@ -13,7 +13,7 @@ addpath('used_functions');
 DataPath = 'Data/traj1';
 inputName = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 %nbKindOfTraj =1;
-refTime=100;
+s_bar=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
 
@@ -54,21 +54,23 @@ connection = initializeConnection
 
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t{1} = loadTrajectory(DataPath, 'top', 'refNb', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{1} = loadTrajectory(DataPath, 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %take one of the trajectory randomly to do test, the others are stocked in
 %train1.
-[train1,test] = partitionTrajectory(t1,1,procentData,refTime);
+
+[train1,test] = partitionTrajectory(t{1},1,procentData,s_bar);
 
 %Compute the distribution for each kind of trajectories.
-promp{1} = computeDistribution(train1, M, refTime,c,h);
+promp{1} = computeDistribution(train1, M, s_bar,c,h);
 
 i = size(promp,1)+1;
 while (i > size(promp,1) || i < 1)
     i = input(['Give the trajectory you want to replay (between 1 and ' num2str(size(promp,1)), ')']);
 end
+
 %This function replays the trajectory into gazebo.
-replayProMP(i, promp{1}, connection,refTime);
+replayProMP(i, promp{1}, connection,s_bar);
 
 trial = size(promp,1)+1;
 while (trial > size(promp,1) || trial < 1)
@@ -80,14 +82,14 @@ w = computeAlpha(test{1}.nbData,t, nbInput);
 promp{1}.w_alpha= w{1};
 
 %begin to play the first nbFirstData
-replayObservedData(test,connection);
+replayObservedData(test{1},connection);
 
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,refTime,c,h,test{1}.nbData, expNoise, 'MO');
-infTraj = inference(promp, test{1}, M, refTime, c, h, test{1}.nbData, expNoise, alphaTraj);
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,s_bar,c,h,test{1}.nbData, expNoise, 'MO');
+infTraj = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj);
 
 %replay the movement into gazebo
-continueMovement(infTraj,connection, test.nbData,refTime, promp{1}.PSI_z,inputName);
+continueMovement(infTraj,connection, test{1}.nbData,s_bar, promp{1}.PHI_z,inputName);
 
 %close the port and the program replay.
 closeConnection(connection);
