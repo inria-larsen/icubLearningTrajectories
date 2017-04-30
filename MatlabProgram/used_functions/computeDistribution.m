@@ -11,7 +11,8 @@ function promp = computeDistribution(traj, M, s_ref,c,h)
     promp.mu_alpha = mean(promp.traj.alpha);
     promp.sigma_alpha = cov(promp.traj.alpha);
 
-    promp.PHI_z = computeBasisFunction (s_ref,M,promp.traj.nbInput, 1, s_ref,c,h, s_ref);
+    promp.PHI_norm = computeBasisFunction (s_ref,M,promp.traj.nbInput, 1, s_ref,c,h, s_ref);
+    promp.PHI_mean = computeBasisFunction (s_ref,M,promp.traj.nbInput, promp.mu_alpha, s_ref*promp.mu_alpha,c,h, s_ref*promp.mu_alpha);
 
 %     val = 0;
 %     for cpt =1:size(promp.traj.nbInput,2)
@@ -30,6 +31,7 @@ function promp = computeDistribution(traj, M, s_ref,c,h)
        %Least square
         w(j,:) = (promp.PHI{j}'*promp.PHI{j}+1e-12*eye(sizeNoise)) \ promp.PHI{j}' * promp.traj.y{j};        
         listw(j,:) =w(j,:); 
+      %  promp.traj.interval(j) = promp.traj.interval(j)  + promp.traj.realTime{j}(promp.traj.totTime);
 
     end
     
@@ -37,7 +39,8 @@ function promp = computeDistribution(traj, M, s_ref,c,h)
     promp.mu_w = mean(listw)';
     promp.sigma_w = cov(listw); %sometimes have < 0 for forces as it is not
     promp.sigma_w = nearestSPD(promp.sigma_w);
-    promp.meanTimes= mean(promp.traj.totTime);
+    promp.meanTimes= length(promp.PHI_mean);%mean(promp.traj.totTime);
+    promp.meanInterval = mean(promp.traj.interval);
 end
    
    

@@ -8,13 +8,19 @@ import yarp.Port;
 import yarp.Bottle;
 
 connection.port=Port;
-
 %first close the port just in case
 connection.port.close;
 
-disp('Going to open port /matlab/write and read');
+connection.port2=Port;
+connection.port2.close;
+
+disp('Going to open port /matlab/write');
 connection.port.open('/matlab/write');
-rep = input('Please connect to a bottle sink (e.g. yarp read) and press a button.\n');
+disp('Going to open port /matlab/ispeak');
+connection.port2.open('/matlab/ispeak');
+rep = input('Please connect to a bottle sink (e.g. yarp read/write) and press a button.\n');
 connection.b = Bottle;
 connection.c = Bottle;
+connection.ispeak = Bottle;
+
 end

@@ -1,4 +1,5 @@
-%In this demo, you can replay learned movement with the geomagic on iCubGazeboSim, and then the robot will finish the movement by its own.
+%In this demo, you can replay learned movement; then you can begin a movement with the geomagic on iCubGazeboSim. To that, you will use a Cpp program that records your movement as long as you press a Geomagic button. Then, this script retrieve these early observation, and infer the movement end. It replays it on the icubGazeboSim. 
+
 
 % by Oriane Dermy 07/09/2016
 % For any problem / remark / improvement, contact me:
@@ -6,6 +7,7 @@
 close all;
 clearvars;
 addpath('used_functions');
+warning('off','MATLAB:colon:nonIntegerIndex')
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 DataPath = 'Data/traj1';
@@ -63,9 +65,9 @@ t{2} = loadTrajectory('Data/haut', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Sp
 promp{1} = computeDistribution(train{1}, M, s_bar,c,h);
 promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
 
-%drawDistribution(promp{3}, inputName,s_bar, 1:3);
-drawDistribution(promp{2}, inputName,s_bar,1:3);
-drawDistribution(promp{1}, inputName,s_bar,1:3);
+% %drawDistribution(promp{3}, inputName,s_bar, 1:3);
+% drawDistribution(promp{2}, inputName,s_bar,1:3);
+% drawDistribution(promp{1}, inputName,s_bar,1:3);
 
 cont=1;
 while( cont==1)
@@ -79,33 +81,30 @@ while( cont==1)
     cont = input('Do you want to replay? (yes=1, no=0)');
 end
 
+
+
 cont=1;
-while (cont==1)
-    trial = length(promp)+1;
-    while (trial > length(promp) || trial < 1)
-        trial = input(['Give the trajectory you want to test (between 1 and ', num2str(length(promp)),')']);
-    end
-    disp(['We try the number ', num2str(trial)]);
-%%
-    w = computeAlpha(test{trial}{1}.nbData,t, nbInput);
+while( cont==1)
+    
+    test = beginATrajectory(connection);
+
+    w = computeAlpha(test.nbData,t, nbInput);
     promp{1}.w_alpha= w{1};
     promp{2}.w_alpha= w{2};
-
-    %begin to play the first nbFirstData
-    replayObservedData(test{trial}{1},connection);
-tic;
     %Recognition of the movement
-    [alphaTraj,type, x] = inferenceAlpha(promp,test{trial}{1},M,s_bar,c,h,test{trial}{1}.nbData, expNoise, 'MO');
-    infTraj = inference(promp, test{trial}{1}, M, s_bar, c, h, test{trial}{1}.nbData, expNoise, alphaTraj);
-    toc;
-   
+    [alphaTraj,type, x] = inferenceAlpha(promp,test,M,s_bar,c,h,test.nbData, expNoise, 'MO');
+    [infTraj, Treco] = inference(promp, test, M, s_bar, c, h, test.nbData, expNoise, alphaTraj, connection);
+    
+    sayType(inputName{Treco}, connection);
+    
     %replay the movement into gazebo
-    continueMovement(infTraj,connection, test{trial}{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
-
-    %draw the infered movement
-    drawInference(promp,infTraj, test{trial}{1},s_bar)
-    cont = input('Do you want to infer again? (Y=1, N=0)');
+    continueMovement(infTraj,connection, test.nbData,s_bar, promp{type}.PHI_norm,inputName);
+    cont = input('Do you want to infer again? (yes=1, no=0)');
 end
+    %draw the infered movement
+%    drawInference(promp,infTraj, test,s_bar)
+%    cont = input('Do you want to infer again? (Y=1, N=0)');
+
    
 %close the port and the program replay.
 closeConnection(connection);

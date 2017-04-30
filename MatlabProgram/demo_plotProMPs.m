@@ -13,8 +13,7 @@ addpath('used_functions'); %add some fonctions we use.
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 DataPath = 'Data/traj1';
 inputName = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
-
-refTime=100;
+s_bar=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
 nbInput(2) = 6; %other inputs (here forces and wrenches)
 
@@ -33,42 +32,53 @@ dimRBF = 0;
 for i=1:size(M,2)
     dimRBF = dimRBF + M(i)*nbInput(i);
 end
-c(1) = 1.0 / (M(1)); %center of gaussians
+c(1) = 1.0 / (M(1));%center of gaussians
 c(2) = 1.0 / (M(2));
 h(1) = c(1)/M(1); %bandwidth of gaussians
 h(2) = c(2)/M(2);
 
 %recover the data saved in the Data/trajX/recordY.txt files
-t{1} = loadTrajectory(DataPath, 'top', 'refNb', refTime, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{1} = loadTrajectory(DataPath, 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %take one of the trajectory randomly to do test, the others are stocked in
 %train1.
-[train1,test{1}] = partitionTrajectory(t{1},1,procentData,refTime);
+t{1} = loadTrajectory('Data/bas', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{2} = loadTrajectory('Data/haut', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{3} = loadTrajectory('Data/milieu', 'front', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %plot recoverData
 drawRecoverData(t{1}, inputName, 'Specific');
 
+[train{1},test{1}] = partitionTrajectory(t{1},1,procentData,s_bar);
+[train{2},test{2}] = partitionTrajectory(t{2},1,procentData,s_bar);
+[train{3},test{3}] = partitionTrajectory(t{3},1,procentData,s_bar);
+
 %Compute the distribution for each kind of trajectories.
-promp{1} = computeDistribution(train1, M, refTime,c,h);
+promp{1} = computeDistribution(train{1}, M, s_bar,c,h);
+promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
+promp{3} = computeDistribution(train{3}, M, s_bar,c,h);
 
 %plot distribution
-drawDistribution(promp, inputName,refTime);
+drawDistribution(promp{1}, inputName,s_bar,3);
+drawDistribution(promp{2}, inputName,s_bar,3);
+drawDistribution(promp{3}, inputName,s_bar,3);
 
-trial = size(promp,1)+1;
-while (trial > size(promp,1) || trial < 1)
-    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(size(promp,1)),')']);
+trial = length(promp)+1;
+while (trial > length(promp) || trial < 1)
+    trial = input(['Give the trajectory you want to test (between 1 and ', num2str(length(promp)),')']);
 end
 disp(['We try the number ', num2str(trial)]);
 
-test = test{1};
+test = test{trial};
 w = computeAlpha(test{1}.nbData,t, nbInput);
 promp{1}.w_alpha= w{1};
+promp{2}.w_alpha= w{2};
+promp{3}.w_alpha= w{3};
 
 %Recognition of the movement
-[alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,refTime,c,h,test{1}.nbData, expNoise, 'MO');
-infTraj = inference(promp, test{1}, M, refTime, c, h, test{1}.nbData, expNoise, alphaTraj);
+[alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,s_bar,c,h,test{1}.nbData, expNoise, 'ML');
+infTraj = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj);
 
 %draw the infered movement
-drawInference(promp,infTraj, test{1},refTime)
-
+drawInferenceRescaled(promp,infTraj, test{1},s_bar)
 

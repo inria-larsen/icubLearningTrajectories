@@ -8,10 +8,12 @@ function drawBasisFunction(PHI,nbFunctions)
         figure;
         for k=1:size(nbFunctions,2)
              for i=1:nbFunctions(k)
-                plot(PHI(:,i), 'color', [0, k/size(nbFunctions,2), 0]);hold on;
+                plot(PHI(:,i), 'b');hold on;
              end
         end
-        title('representation of the basis function used for each type of data')
-        xlabel('time')
-        ylabel('basis normalized')
+                 set(gca, 'fontsize', 20);
+
+        %title([ num2str(nbFunctions(1)) ' functions'],'fontsize', 24);
+        xlabel('normalized # samples','fontsize', 24)
+        ylabel('normalized RBF','fontsize', 24)
 end

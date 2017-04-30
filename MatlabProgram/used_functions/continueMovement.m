@@ -1,12 +1,12 @@
-function continueMovement(inf,connection,nbData,z, PSI_z, varargin)
+function continueMovement(inf,connection,nbData,z, PHI_norm, varargin)
 %continueMovement plays the trajectory recognized into gazebo.
 
-data = PSI_z*inf.mu_w;
-data_max = PSI_z*(inf.mu_w + 1.96*sqrt(diag(inf.sigma_w)));
-data_min = PSI_z*(inf.mu_w - 1.96*sqrt(diag(inf.sigma_w)));
+data = PHI_norm*inf.mu_w;
+data_max = PHI_norm*(inf.mu_w + 1.96*sqrt(diag(inf.sigma_w)));
+data_min = PHI_norm*(inf.mu_w - 1.96*sqrt(diag(inf.sigma_w)));
 compliance = 0.0;
 
-if(length(varargin) > 0)
+if(~isempty(varargin))
     list= varargin{1}
 else
     list= {'unamed','unamed','unamed','unamed','unamed','unamed', 'unamed','unamed','unamed'}

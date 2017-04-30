@@ -1,5 +1,5 @@
 function replayObservedData(newTraj, connection)
-%replayObservedData plays the nbData first position
+%replayObservedData plays the nbData early observations
 
 %data = y_trial_Tot{trial};
 
