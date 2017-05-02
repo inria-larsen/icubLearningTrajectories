@@ -79,24 +79,32 @@ protected:
     ofstream record;
     BufferedPort<Bottle> port; //port to read forces
     double currentTime, startTrajectory;
-    string fileName; //name of the file within the trajectory is recorded
+    string fileName, folderName; //name of the file within the trajectory is recorded
     Vector x,o,xRobot,oRobot; // positionand orientation of the simulated robot and the geomagic one   
         
     //initialize file before writing in it
     bool initFile()
-    {
-		fileName = string("record"+ boost::lexical_cast<string>(totalTraj) + ".txt");  
+	{
+		fileName = string(folderName + "/record"+ boost::lexical_cast<string>(totalTraj) + ".txt");  
+		cout << "File name : " << fileName << endl;
 		record.open(fileName.c_str(), ios::out | ios::trunc); 
-        if (!record)
-        {  
-			cerr << "Cannot creat the file " << totalTraj  << " for recording movements." << endl;
-			return false;
-		}else
-		{
-			cout << "Correctly created " << fileName << endl;
+	    if (!record)
+	    {  
+			cerr << "Cannot create the file " << totalTraj  << " for recording movements." << endl;
+			fileName = string("record"+ boost::lexical_cast<string>(totalTraj) + ".txt");  
+			cout << "We try file name : " << fileName << endl;
+			record.open(fileName.c_str(), ios::out | ios::trunc); 
+		    if (!record)
+			{  
+				cerr << "Cannot create the file " << totalTraj  << " for recording movements." << endl;
+				return false;
+			}
 		}
-		startTrajectory = Time::now();
 		
+		cout << "Correctly created " << fileName << endl;
+		
+		startTrajectory = Time::now();
+			
 		return true;
 	}
 	
@@ -138,9 +146,9 @@ protected:
     //close the geomagic and its feedback.
     void closeGeomagic()
     {
-		cout << "Closing geomagic..." << endl;	
-		igeo->setTransformation(yarp::math::eye(4,4));
-		igeo->stopFeedback();
+	cout << "Closing geomagic..." << endl;	
+	igeo->setTransformation(yarp::math::eye(4,4));
+	igeo->stopFeedback();
         drvGeomagic.close();                
         cout << "Geomagic is closed." << endl;	
     }
@@ -166,7 +174,7 @@ public:
 		string name=rf.check("name",Value("test_feedback")).asString().c_str();
         string robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
 		string part=rf.check("part",Value("left_arm")).asString().c_str();	
-    	
+    	folderName = rf.check("folder",Value("../../../MatlabProgram/Data/newTraj")).asString().c_str();	
         string geomagic=rf.check("geomagic",Value("geomagic")).asString().c_str();
         minForce=fabs(rf.check("min-force-feedback",Value(0.01)).asDouble());
         maxForce=fabs(rf.check("max-force-feedback",Value(1.5)).asDouble());
@@ -180,14 +188,14 @@ public:
         flagRecord = 0; // precise if we are recording or not (if the button has been pressed or not).
         totalTraj = 0; //total number of trajectories
 		
-		if (!initGeomagic(name,geomagic)) return false;
+	if (!initGeomagic(name,geomagic)) return false;
         
         if (!initCartesian(robot,part,1,1)) return false;
 
         client.getPose(x,o); // get current pose as x,o
         feedback=yarp::math::operator*(x,0.0);	
-		verifyFeedback();
-		igeo->setFeedback(feedback);
+	verifyFeedback();
+	igeo->setFeedback(feedback);
 
         return true;
     }
