@@ -1,4 +1,4 @@
-function drawInference(promp, infTraj, test,s_ref)
+function drawInference(promp, infTraj, test,s_ref, varargin)
 list = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 
 nbInput = promp{1}.traj.nbInput;
@@ -43,8 +43,13 @@ for vff=1:nbInput(1)
          
 end
 legend(nameFig(1,[dtG, dnG, prevG, newG]),'real trajectory', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
-end
 
+if (~isempty(varargin))
+    if(varargin{1} == 'Name')
+        title(varargin{2}, 'fontsize', 24)
+    end
+end
+end
 % lim = axis
 % maxVal = max(infTraj.alpha*s_ref,test.totTime);
 % meanTimeSample = test.realTime(test.totTime) / test.totTime;

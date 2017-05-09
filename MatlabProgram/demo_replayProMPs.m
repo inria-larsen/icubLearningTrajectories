@@ -6,6 +6,7 @@
 close all;
 clearvars;
 addpath('used_functions');
+warning('off','MATLAB:colon:nonIntegerIndex');
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 DataPath = 'Data/traj1';
@@ -40,7 +41,7 @@ connection = initializeConnection
 
 %You have to launch:
 %1. yarpserver
-%2. gazebo with worldPROMPS
+%2. gazebo with world2height.sdf
 %4. Create another terminal and launch:  iKinCartesianSolver --robot icubGazeboSim --part left_arm
 %5. Launch: simCartesianControl --robot icubGazeboSim in this terminal
 %6. Then, launch the program. It will show you the learned distribution.

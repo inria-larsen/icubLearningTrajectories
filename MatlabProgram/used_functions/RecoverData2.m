@@ -1,4 +1,4 @@
-function drawRecoverData2(traj, list)
+function RecoverData2(traj, list)
 
 
 

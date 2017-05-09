@@ -30,19 +30,17 @@ Then you have to add the path for the file worldPROMPS.sdf into your bashrc.
 To launch this program that learn trajectories from the geomagic touch. You can use the world "worldPROMPS.sdf" to have some goal to achieve with the robot left arm. Open the code of this function to have more information about how to launch it.
 
 1. It requires to have installed the geomagic touch driver and  to have done all its setup (see pre-installation). Then, you have to launch:
-2. 0st terminal:
-yarpserver
-3. 1st terminal:
-yarprobotinterface --context geomagic --config geomagic.xml
-4. 2nd terminal:
-yarpmanager
-5. Open the xml file (in folder /App) and launch one by one the applications:
+2. launch yarpserver
+3. launch yarprun --server /icub01
+4. launch yarprobotinterface --context geomagic --config geomagic.xml (in a terminal where you have added the geomagic environement and you have done the geomagic calibration, as explained here https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
+5. launch yarpmanager
+6. Open the xml file (in folder /App) and launch one by one the applications:
 gazebo
 wholeBodyDynamicsTree
 iKinCartesianSolver 
 simCartesianControl 
 recordTrajectoriesWithGeomagic
-9. Connect from this same xml file the port:
+7. Connect from this same xml file the port:
 yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
 
 Now you can use the launched program:
@@ -68,20 +66,17 @@ You just have to launch this program.
 
 # Launch the demo_replayProMPs program
 
-2. Launch a yarpserver.
-3. Launch demo_replayProMPs.m on Matlab.
+1. yarpserver; the server yarprun --server /icub01 and the geomagic have to be launched as before.
+2. Run demo_replayProMPs.m on Matlab.
 This programm will wait with the message "Please connect to a bottle sink (e.g. yarp read) and press a button."
-4.  launch yarpserver
-5. launch gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf 
-6. launch wholeBodyDynamicsTree --autoconnect --robot icubGazeboSim (to have information about forces)
-7. launch iKinCartesianSolver --robot icubGazeboSim --part left_arm
-8. launch simCartesianControl --robot icubGazeboSim
-9. launch demo_replayProMPs.m on matlab 
-10. launch the replay program (in CppProgram/build/bin)
-11. connect the port by typing in a terminal:
- * yarp connect /matlab/write /replay/read
- * yarp connect /replay/read /matlab/write
- * yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /replay/readForces
+3. run yarpmanager. Open the xml file (in folder /App) and launch one by one the applications:
+- gazebo
+- wholeBodyDynamicsTree
+- iKinCartesianSolver 
+- simCartesianControl 
+- replayTrajectoriesWithGeomagic
+4. Connect the ports from yarpmanager.
+5. Go back to the Matlab program, press enter and follow the instruction.
 
 
 

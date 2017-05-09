@@ -11,6 +11,7 @@ xs = cell(nbTrajType);
 proba = -Inf*ones(nbTrajType,1);
 for i=1:nbTrajType
   [bestAlpha(i), proba(i), xs{i}] = computeBestAlpha(promps{i}, obsTraj, expNoise, promps{1}.traj.nbInput, M, nbData,s_ref,c,h, typeReco);
+
 end
 
 [~, typet] = max(proba);

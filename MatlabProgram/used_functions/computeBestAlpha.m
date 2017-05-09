@@ -42,7 +42,7 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, obsTraj, expNoise, nb
         end
         
         %computes the maximum likelihood that this alpha with this ProMP corresponds to the observed trajectory 
-        PHI_reco = computeBasisFunction(refTime,M(1), nbInputs(1), value , floor(refTime/value ), c(1), h(1), nbData,c);
+        PHI_reco = computeBasisFunction(refTime,M(1), nbInputs(1), value , round(refTime/value), c(1), h(1), nbData);
         umax = PHI_reco*mu_w_reco;
         sigmax = expNoise*eye(size(umax,1));
         [bestproba,x] = mesureDiff('ML', umax, sigmax, obsTraj.partialTraj, nbData, nbInputs(1)); %mesure of the error using Maximum Likelihood
@@ -60,7 +60,6 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, obsTraj, expNoise, nb
                 traj_var = expNoise*eye(size(traj_mean,1));
                 [proba(i,1),x] = mesureDiff(type, traj_mean, traj_var, obsTraj.partialTraj, nbData, nbInputs(1));%mesure of the error using the type "type"
                 proba(i,2)=ProMP.traj.alpha(i); %save alpha value information
-
                 if(proba(i,1) > bestproba)
                     bestproba = proba(i,1);
                     value = proba(i,2);
@@ -79,9 +78,12 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, obsTraj, expNoise, nb
             end
         end
      end
+%      figure;
+%      scatter(proba(:,2), proba(:,1));
+%      hold on;
+%      vline(obsTraj.alpha)
      
-     
-%%%Plot for debugging purpose:  
+%%Plot for debugging purpose:  
 %  subplot(1,3,1);
 %   hold on;
 % 

@@ -6,7 +6,7 @@ function [test] = beginATrajectory(connection)
     ok=1;
     t=1
     while(ok==1)  
-        disp('before read');
+        disp('You can begin a movement. Maintain the dark geomagic button pressed and realase it when you want it finish it.');
         connection.c.clear(); 
         connection.port.read(connection.c); 
         disp('we have received data'); 

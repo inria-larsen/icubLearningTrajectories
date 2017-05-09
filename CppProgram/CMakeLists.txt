@@ -19,9 +19,15 @@ add_definitions(-D_USE_MATH_DEFINES)
 add_executable(recordTrajectoriesWithGeomagic recordTrajectories.cpp cartesianClient.cpp)
 target_link_libraries(recordTrajectoriesWithGeomagic ${YARP_LIBRARIES} pthread)
 
-add_executable(replayTrajectoriesWithGeomagic replayTrajectories.cpp cartesianClient.cpp)
-target_link_libraries(replayTrajectoriesWithGeomagic ${YARP_LIBRARIES} pthread)
+add_executable(replayTrajectories replayTrajectories.cpp cartesianClient.cpp)
+target_link_libraries(replayTrajectories ${YARP_LIBRARIES} pthread)
+
+
+add_executable(replayTrajectoriesWithGeom replayTrajectoriesWithGeom.cpp cartesianClient.cpp)
+target_link_libraries(replayTrajectoriesWithGeom ${YARP_LIBRARIES} pthread)
 
 install(TARGETS recordTrajectoriesWithGeomagic DESTINATION bin)
-install(TARGETS replayTrajectoriesWithGeomagic DESTINATION bin)
+install(TARGETS replayTrajectories DESTINATION bin)
+install(TARGETS replayTrajectoriesWithGeom DESTINATION bin)
+
 

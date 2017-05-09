@@ -7,8 +7,7 @@ set(0,'DefaultAxesFontSize',12)
 
 %Plot the total trial and the data we have
 nameFig = figure;
-
-for vff=1:nbInput(1)
+for vff=1:nbInput(1);
     subplot(nbInput(1),1,vff);
 
 

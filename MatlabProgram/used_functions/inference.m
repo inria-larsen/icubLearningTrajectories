@@ -1,4 +1,4 @@
-function [infTraj] = inference(promps,obsTraj,M,z,c,h,nbData, expNoise, expAlpha)
+function [infTraj, typeReco] = inference(promps,obsTraj,M,s_bar,c,h,nbData, expNoise, expAlpha, varargin)
 %INFERENCE
 %in this function, we recongize a movement from some initial data
 %and we complete it. We recognize and modify only the position information 
@@ -7,7 +7,6 @@ function [infTraj] = inference(promps,obsTraj,M,z,c,h,nbData, expNoise, expAlpha
 
 nbKindOfTraj = length(promps);
 nbInput= promps{1}.traj.nbInput;
-
 
 
 %computation of the loglikelihood for each trajectory using only cartesian
@@ -26,14 +25,15 @@ end
 % movement correspond to the distribution
 reco = {0 , -Inf };
 for i=1:nbKindOfTraj
-    %matrix of cartesian basis functions that correspond to the first nbData 
-    PHI_coor{i} = computeBasisFunction(z,M(1), nbInput(1), expAlpha, floor(z/expAlpha), c(1), h(1), nbData);
+    %matrix of cartesian basis functions that correspond to the first nbData
+    
+    PHI_coor{i} = computeBasisFunction(s_bar,M(1), nbInput(1), expAlpha, round(s_bar/expAlpha), c(1), h(1), nbData);
     %matrix of forces basis functions that correspond to the first nbData
     %PHI_forces{i} = computeBasisFunction(z,nbFunctions(2), promps{i}.traj.nbInput(2),promps{i}.mu_alpha, floor(z/promps{i}.mu_alpha), center_gaussian(2), h(2), nbData);%computeBasisForces(z,nbFunctions(2),mu_alpha(i), floor(z/mu_alpha(i)), h, nbData);
     
     %matrix of basis functions for all data that correspond to the first
     %nbData with phasis alpha_mean
-    PHI{i} =  computeBasisFunction(z,M, nbInput, expAlpha, floor(z/expAlpha), c, h, floor(z/expAlpha));%blkdiag(PHI_coor{i},PHI_forces{i}); %PHI_coor{i};
+    PHI{i} =  computeBasisFunction(s_bar,M, nbInput, expAlpha, floor(s_bar/expAlpha), c, h, floor(s_bar/expAlpha));%blkdiag(PHI_coor{i},PHI_forces{i}); %PHI_coor{i};
     
     %we compute the learned distribution trajectory of cartesian position
     u{i} = PHI_coor{i}*mu_w_coord{i};
@@ -52,8 +52,8 @@ for i=1:nbKindOfTraj
     end
 end
 
-disp(['The recognize trajectory is the number ', num2str(reco{1})])
-
+% disp(['The recognize trajectory is the number ', num2str(reco{1})])
+ typeReco= reco{1};
 %we retrieve the computed distribution that correspond to the recognized
 %trajectory
 mu_new = promps{reco{1}}.mu_w;
@@ -62,17 +62,17 @@ sigma_new = promps{reco{1}}.sigma_w;
 %we aren't suppose to know "realData",  here it is only used to draw the real
 %trajectory of the sample if we continue it to the end
 
-display(['The real phasis is ', num2str(obsTraj.alpha), ' with total time : ', num2str(obsTraj.totTime) ])
-display(['The supposed phasis is ', num2str(expAlpha), ' with total time : ', num2str(z / expAlpha) ])
+%display(['The real phasis is ', num2str(obsTraj.alpha), ' with total time : ', num2str(obsTraj.totTime) ])
+%display(['The supposed phasis is ', num2str(expAlpha), ' with total time : ', num2str(z / expAlpha) ])
 
 %%Creation of the basis function with mean phasis & nbData iterations
  
 infTraj.alpha =  expAlpha;
-infTraj.timeInf = z / infTraj.alpha ;
+infTraj.timeInf = floor(s_bar / infTraj.alpha);
 infTraj.PHI = PHI{reco{1}};
 ma = ones(1,nbData);
-mb = zeros(1,round(z /infTraj.alpha)- nbData); 
-mc = zeros(1, round(z /infTraj.alpha));
+mb = zeros(1,round(s_bar /infTraj.alpha)- nbData); 
+mc = zeros(1, round(s_bar /infTraj.alpha));
 ma = [ma, mb]; % 1 for data we know 0 for the others
 mk = []; % C/C the mask for other data
 for vv = 1:nbInput
@@ -84,7 +84,7 @@ mask = logical(mk);
 PHI_update = infTraj.PHI(mask,:);
 
 %distribution update
-K = sigma_new*PHI_update' * inv(expNoise*eye(size(PHI_update*sigma_new*PHI_update')) + PHI_update*sigma_new*PHI_update');
+K = sigma_new*PHI_update' / (expNoise*eye(size(PHI_update*sigma_new*PHI_update')) + PHI_update*sigma_new*PHI_update');
 mu_new = mu_new + K* (obsTraj.partialTraj(1:nbData*nbInput(1),:) - PHI_update*mu_new);
 sigma_new = sigma_new - K*(PHI_update*sigma_new);
 

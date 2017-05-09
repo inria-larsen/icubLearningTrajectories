@@ -25,11 +25,11 @@ for t = round(inf.alpha*nbData): z
     connection.port.write(connection.b);
     connection.port.read(connection.c);
     num = str2num(connection.c);
-    disp(['Receiving: forces = ', num2str(num(1,1)), ' ',num2str(num(1,2)),' ', num2str(num(1,3))]);
-    disp(['Expected:  forces = ', num2str(data(z*(4-1)+t)),' ', num2str(data(z*(5-1)+t)),' ', num2str(data(z*(6 -1)+t))]);
+%    disp(['Receiving: forces = ', num2str(num(1,1)), ' ',num2str(num(1,2)),' ', num2str(num(1,3))]);
+%    disp(['Expected:  forces = ', num2str(data(z*(4-1)+t)),' ', num2str(data(z*(5-1)+t)),' ', num2str(data(z*(6 -1)+t))]);
     
-    disp(['Receiving: wrenches = ', num2str(num(1,4)), ' ',num2str(num(1,5)), ' ',num2str(num(1,6))]);
-    disp(['Expected:  wrenches = ', num2str(data(z*(7-1)+t)),' ', num2str(data(z*(8-1)+t)), ' ',num2str(data(z*(9 -1)+t))]);
+%    disp(['Receiving: wrenches = ', num2str(num(1,4)), ' ',num2str(num(1,5)), ' ',num2str(num(1,6))]);
+%    disp(['Expected:  wrenches = ', num2str(data(z*(7-1)+t)),' ', num2str(data(z*(8-1)+t)), ' ',num2str(data(z*(9 -1)+t))]);
 
     compliance = 0.0;
     
@@ -43,11 +43,11 @@ for t = round(inf.alpha*nbData): z
         elseif(( valActu < fmax(t,i)) && (valActu > f(t,i)))
             compliance = compliance +  1 - (abs(f(t,i) - valActu )/ abs(fmax(t,i) - f(t,i)));
         else
-            disp(['Input ', list{i+3}, ' is not expected. We have ',num2str(valActu), ' It should be between ', num2str(fmin(t,i)), ' and ', num2str(fmax(t,i))]);
+ %           disp(['Input ', list{i+3}, ' is not expected. We have ',num2str(valActu), ' It should be between ', num2str(fmin(t,i)), ' and ', num2str(fmax(t,i))]);
         end
     end
     compliance = compliance / 6;
-    disp(['Compliance = ', num2str(compliance)]);
+ %   disp(['Compliance = ', num2str(compliance)]);
 end
 
 %Send information about the end of the trajectory and verify it

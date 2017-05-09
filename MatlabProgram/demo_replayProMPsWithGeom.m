@@ -91,11 +91,11 @@ while( cont==1)
     w = computeAlpha(test.nbData,t, nbInput);
     promp{1}.w_alpha= w{1};
     promp{2}.w_alpha= w{2};
+
     %Recognition of the movement
     [alphaTraj,type, x] = inferenceAlpha(promp,test,M,s_bar,c,h,test.nbData, expNoise, 'MO');
     [infTraj, Treco] = inference(promp, test, M, s_bar, c, h, test.nbData, expNoise, alphaTraj, connection);
-    
-    sayType(inputName{Treco}, connection);
+    sayType(promp{Treco}.traj.label, connection);
     
     %replay the movement into gazebo
     continueMovement(infTraj,connection, test.nbData,s_bar, promp{type}.PHI_norm,inputName);

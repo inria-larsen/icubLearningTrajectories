@@ -15,7 +15,7 @@
 
     <module>
         <name>iKinCartesianSolver</name>
-        <parameters>--robot icubGazeboSim --part left_arm</parameters>
+        <parameters>--robot iCubGazeboSim -context simCartesianControl --part left_arm</parameters>
         <dependencies>
             <port timeout="10">/icubGazeboSim/left_arm/state:o</port>
         </dependencies>
@@ -24,7 +24,7 @@
 
     <module>
         <name>simCartesianControl</name>
-        <parameters>--robot icubGazeboSim </parameters>
+        <parameters>--robot icubGazeboSim</parameters>
    <dependencies>
             <port timeout="10">/cartesianSolver/left_arm/out</port>
         </dependencies>
@@ -65,7 +65,6 @@
    <name>yarpdev</name>
         <parameters>--device speech --lingware-context speech --default-language fr-FR --pitch 70 --speed 70</parameters>
            <dependencies>
-            <port timeout="10">/matlab/write</port>
         </dependencies>
         <stdio>icub01</stdio>
         <node>icub01</node>
