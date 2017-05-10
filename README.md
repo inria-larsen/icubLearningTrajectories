@@ -16,7 +16,7 @@ icub-main
 yarp
 gazebo
 WholeBodyDynamicsTree
-The geomagic touch software (see here: !)
+The geomagic touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 
 ## INSTALLATION:
 `cd CppProgram`   
