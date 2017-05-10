@@ -11,11 +11,11 @@ This program is a subpart of the project "icub-learning-trajectories" composed o
 - demo_replayProMPsWithGeom.m: combined with replayTrajectoriesWithGeom.cpp: It allows you to move the robot's arm in the simulation, using the haptic device. You can then initate a trajectory and ask the robot to finish this movement when you want.
 
 ## PRE-INSTALLATION:
-You need to have installed:
-icub-main
-yarp
-gazebo
-WholeBodyDynamicsTree
+You need to have installed:  
+icub-main  
+yarp  
+gazebo  
+WholeBodyDynamicsTree  
 The geomagic touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 
 ## INSTALLATION:
