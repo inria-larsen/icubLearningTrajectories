@@ -5,9 +5,10 @@ If you have some questions or remarks, please send an email to oriane.dermy@inri
 This program is a subpart of the project "icub-learning-trajectories" composed of different programs:
 1. recordTrajectories.cpp: to record into some files (recordX.txt, were 'X' is your new trajectory) the icub's arm movement as following:
 "X_geom Y_geom Z_geom Fx Fy Fz mx my mz x_robot y_robot z_robot" where the trio values are: the position given by the geomagic, the forces and moment received by "wholeBodyDynamicsTree", and the cartesian position of the icub simulated robot.
-2. Two matlab program to learn the distirubtion other these trajectories and to infer the end of an initiated movement:
-2. demo_plotProMPs.m: It plots the different results (observed trajectories, learned distribution, infered trajectory from few samples);
-3. demo_replay.m combined with replayTrajectories.cpp: It replays learned and predicted movements on the simulated robot.
+2. Some matlab scripts to learn the distirubtion other these trajectories and to infer the end of an initiated movement:
+- demo_plotProMP(s).m: It plots the different results (observed trajectories, learned distribution, infered trajectory from few samples);
+- demo_replayProMPs.m combined with replayTrajectories.cpp: It replays learned and predicted movements on the simulated robot.
+- demo_replayProMPsWithGeom.m: combined with replayTrajectoriesWithGeom.cpp: It allows you to move the robot's arm in the simulation, using the haptic device. You can then initate a trajectory and ask the robot to finish this movement when you want.
 
 ## PRE-INSTALLATION:
 You need to have installed:
@@ -15,7 +16,7 @@ icub-main
 yarp
 gazebo
 WholeBodyDynamicsTree
-The geomagic touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
+The geomagic touch software (see here: !)
 
 ## INSTALLATION:
 `cd CppProgram`   
@@ -24,33 +25,39 @@ The geomagic touch software (see here: https://github.com/inria-larsen/icub-manu
 `ccmake ../`   
 `make install`   
 
-Then you have to add the path for the file worldPROMPS.sdf into your bashrc.
+Then, you can add some aliases to simplify the utilisation of our Gazebo world (that contains iCubGazeboSim and some balls that represents goals to reach). For example add these aliases:
+alias gazebo_2goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so world2height.sdf"
+alias gazebo_3goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so world3height.sdf"
+alias gazebo_promps="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf"
+
 # Launch the program recordTrajectories.cpp
 
-To launch this program that learn trajectories from the geomagic touch. You can use the world "worldPROMPS.sdf" to have some goal to achieve with the robot left arm. Open the code of this function to have more information about how to launch it.
-
-1. It requires to have installed the geomagic touch driver and  to have done all its setup (see pre-installation). Then, you have to launch:
-2. launch yarpserver
-3. launch yarprun --server /icub01
-4. launch yarprobotinterface --context geomagic --config geomagic.xml (in a terminal where you have added the geomagic environement and you have done the geomagic calibration, as explained here https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
-5. launch yarpmanager
-6. Open the xml file (in folder /App) and launch one by one the applications:
-gazebo
+Using this program, you can learn trajectories from the Geomagic touch. You can use gazebo_3goal to have some goal to achieve with the robot left arm. 
+Open the code of this function to have more information about how to launch it.
+It requires to have installed the geomagic touch driver and  to have done all its setup (see pre-installation). Then, you have to launch:
+1. yarpserver
+2. yarprun --server /icub01
+3. yarprobotinterface --context geomagic --config geomagic.xml 
+You have to run it from a terminal where the geomagic's environement variable are defined, and  where you have done the geomagic calibration, as explained here https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch
+4. gazebo_3goal
+5. yarpmanager
+From yarpmanager, open the xml file (in folder /App) and launch one by one the applications:
 wholeBodyDynamicsTree
 iKinCartesianSolver 
 simCartesianControl 
 recordTrajectoriesWithGeomagic
-7. Connect from this same xml file the port:
+6. Connect from this same xml file the port:
 yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
 
-Now you can use the launched program:
-When you press the black button of the geomagic, it will creates a file record0.txt. You can learn many trajectories (that will create other files as record1.txt, record2.txt and so on).
+Now, when you press the black button of the geomagic, it will creates a file record0.txt. You can learn many trajectories (that will create other files as record1.txt, record2.txt and so on).
 
-Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and then launch the 3rd and 4th terminal from it. 
+Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and use these .ini files when you launch yarpmanager. To do that, you can:
+1. In a rough way, put this files in your home directory.
+2. Modify the $YOURPATH/APP/recordTrajectoriesGeomagic.xml and add for the different application the parameter --from $YOURPATH/CppProgram/configFiles
 
-# Pre-traitment fo the matlab programs to learn and infer trajectories.
+# Pre-traitment to use the Matlab scripts to learn and infer trajectories.
 
-1. Move the previous "recordX.txt" files into a folder, for example "traj1". 
+1. Move the previous "recordX.txt" files into a folder, for example "$YOURPATH/Data/traj1".
 In either "demo_plotProMPs.m" and "demo_replayProMPs.m", you then have to change some information:
 l39: "loadTrajectory" load your data. In first argument you can give the path of your folder. The second argument correspond to the label you give to your trajectory (its name). The others arguments are not required.
 
