@@ -8,6 +8,8 @@
  * 
  * / UTILISATION
  * If you press the dark button of the geomagic, the program will compute some forces that are proportional to the distance between a reference position and the current position of the tip of the geomagic.
+ * The reference position is the position from where you begin to maintain the geomagic button.
+ * Note that if you want to have big forces (nead to the maximum allowed by maxForce), you have to begin the movement from the bottom left deeper position.
  * 
  * / INPUT:
  * maxForce: you can precise the maximum force you want to send to the robot. Then, you will receive a vector of forces that respects: (fx + fy + fz) < maxForce
@@ -69,7 +71,7 @@ protected:
     //Vector or_old, or_t; //orientation 
     Vector forces;
     double valK; //stiffness 
-	//bool flagSendForces;
+	bool flagSendForces;
     //Vector x,o,xRobot,oRobot; // positionand orientation of the simulated robot and the geomagic one   
 
 	//initialize the geomagic device (creation of its port...)
@@ -148,11 +150,11 @@ public:
 		x0.resize(3);
 		forces.resize(6);
 		valK= maxF ; //3 is the estimation of the maximum distance you can compute from the geomagic.
-		
+		flagSendForces = false;
 		//reference position of the haptic device (bottom left deeper position)
-		x0[0]=-0.104632;
-		x0[1]= -0.092409;
-		x0[2]= -0.108048;
+		//x0[0]=-0.104632;
+		//x0[1]= -0.092409;
+		//x0[2]= -0.108048;
 		if (!initGeomagic(name,geomagic)) return false;
 
 
@@ -205,13 +207,15 @@ public:
         //client.getPose(x,o); // get current position and orientation of the robot in the frame of the geomagic
         //client.getRobotPose(xRobot,oRobot); // get the real current position of the robot
 
-		//if(buttons[0] != 0.0 && flagSendForces==false)
-		//{
-			//igeo->getPosition(x0);
-			//flagSendForces = true;
+		if(buttons[0] ==0.0 && flagSendForces==true)
+			flagSendForces = false;
+		else if(buttons[0] != 0.0 && flagSendForces==false)
+		{
+			igeo->getPosition(x0);
+			flagSendForces = true;
 			//cout << x0[0] << ' ' << x0[1] << ' ' << x0[2] << endl;
 			////igeo->getOrientation(or0);
-		//}
+		}
         //sendForces
         if(buttons[0] != 0.0) 
         {
