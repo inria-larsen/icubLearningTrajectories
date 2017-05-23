@@ -21,7 +21,7 @@ M(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-percentData = 40; %number of data max with what you try to find the correct movement
+percentData = 48; %number of data max with what you try to find the correct movement
 
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
@@ -30,14 +30,9 @@ percentData = 40; %number of data max with what you try to find the correct move
 dimRBF = 0; 
 for i=1:size(M,2)
     dimRBF = dimRBF + M(i)*nbInput(i);
+    c(i) = 1.0 / (M(i));%center of gaussians
+    h(i) = c(i)/M(i); %bandwidth of gaussians
 end
-c(1) = 1.0 / (M(1));%center of gaussians
-c(2) = 1.0 / (M(2));
-h(1) = c(1)/M(1); %bandwidth of gaussians
-h(2) = c(2)/M(2);
-
-%take one of the trajectory randomly to do test, the others are stocked in
-%train1.
 
 %WITH WORLD3HEIGHTS
 t{1} = loadTrajectory('Data/heights/bottom', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
@@ -50,13 +45,16 @@ t{3} = loadTrajectory('Data/heights/middle', 'front', 'refNb', s_bar, 'nbInput',
 % t{3} = loadTrajectory('Data/FLT/top', 'front', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 
-
 %plot recoverData
-drawRecoverData(t{1}, inputName, 'Specific','Specolor','b');
-drawRecoverData(t{2}, inputName, 'Specific','Specolor','r');
-drawRecoverData(t{3}, inputName, 'Specific','Specolor','g');
+drawRecoverData(t{1}, inputName, 'Specolor','b','namFig', 1);
+drawRecoverData(t{1}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','b','namFig',2);
+drawRecoverData(t{2}, inputName, 'Specolor','r','namFig',1);
+drawRecoverData(t{2}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','r','namFig',2);
+drawRecoverData(t{3}, inputName, 'Specolor','g','namFig',1);
+drawRecoverData(t{3}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','g','namFig',2);
 
-
+%take one of the trajectory randomly to do test, the others are stocked in
+%train.
 [train{1},test{1}] = partitionTrajectory(t{1},1,percentData,s_bar);
 [train{2},test{2}] = partitionTrajectory(t{2},1,percentData,s_bar);
 [train{3},test{3}] = partitionTrajectory(t{3},1,percentData,s_bar);
@@ -67,9 +65,9 @@ promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
 promp{3} = computeDistribution(train{3}, M, s_bar,c,h);
 
 %plot distribution
- drawDistribution(promp{1}, inputName,s_bar,1:3);
- drawDistribution(promp{2}, inputName,s_bar,1:3);
- drawDistribution(promp{3}, inputName,s_bar,1:3);
+drawDistribution(promp{1}, inputName,s_bar,[1:3], 'col', 'b');
+drawDistribution(promp{2}, inputName,s_bar,[1:3], 'col', 'r');
+drawDistribution(promp{3}, inputName,s_bar,[1:3], 'col', 'g');
 
 trial = length(promp)+1;
 while (trial > length(promp) || trial < 1)
@@ -85,8 +83,8 @@ promp{3}.w_alpha= w{3};
 
 %Recognition of the movement
 [alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,s_bar,c,h,test{1}.nbData, expNoise, 'MO');
-infTraj = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj);
+infTraj = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj, nbInput);
 
 %draw the infered movement
-drawInferenceRescaled(promp,infTraj, test{1},s_bar)
+drawInferenceRescaled(promp,inputName ,infTraj, test{1},s_bar)
 

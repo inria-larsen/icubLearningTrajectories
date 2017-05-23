@@ -12,20 +12,20 @@ addpath('./used_functions');
 
 
 %%%%%%%%%%%%%%%VARIABLES, please look at the README
-%Can be either ".mat" or ".txt". To use the recorded ".txt" file sample, put: 'Data/traj1'
+%Can be either ".mat" or ".txt". To use the recorded ".txt" file samples, put: 'Data/traj1'
 DataPath= 'Data/traj1_1DOF.mat';
-typeRecover= '.mat'; %if it is txt file with all data, write '.txt'
+typeRecover= '.mat'; %or .txt, it depends on your choice of data file.
 
 inputName = {'z[m]'};%label of your inputs
 s_ref=100; %reference number of samples
-nbInput(1) = 1; %number of input used during the inference (here cartesian position)
-%nbInput(2) = 2;%if you had some input that are not use to recognize the trajectory type
+nbInput(1) = 1; %number of inputs used during the inference (here Cartesian position)
+%nbInput(2) = 2;%if you had some inputs that are not used to recognize the correct movement primitive
 M(1) = 5; %number of basis functions to represent nbInput(1)
 %M(2) = 10; %number of basis functions to represent nbInput(2)
 
-%variable that you can tune to achieve the trajectory correctly: correspond to the expected data noise
+%This variable is the expected data noise, you can tune this parameter to achieve the trajectory correctly
 expNoise = 0.00001;
-percentData = 40; %procent of observed data during the inference
+percentData = 30; %percent of observed data during the inference
 %type of cost function used to infer the modulation time
 %('MO':model/'ML'maximum likelihood/ 'ME' average/'DI' distance).
 choice = 'MO' ;
@@ -49,12 +49,9 @@ end
 [train, test] =  partitionTrajectory(t{1}, 1, percentData, s_ref);
 
 %plot recoverData
-drawRecoverData(t{1}, inputName);
+drawRecoverData(t{1}, inputName, 'Specolor','m','namFig', 1);
 
 %compute the distribution for each kind of trajectories.
-%we define var and TotalTime in this function
-%here we need to define the bandwith of the gaussians h
-%computeDistributions_withCrossOver;
 promp{1} = computeDistribution(train, M, s_ref,c,h);
 
 %plot distribution
@@ -67,7 +64,7 @@ if (strcmp(choice,'ME')==1)
         expAlpha = promp{1}.mu_alpha;
 else
     if(strcmp(choice,'MO')==1)
-        %%%test w_alpha model
+        %alpha model
         w = computeAlpha(test{1}.nbData,t, nbInput);
         promp{1}.w_alpha = w{1};
     end
@@ -79,4 +76,4 @@ display(['expAlpha= ', num2str(expAlpha), ' real alpha= ', num2str(test{1}.alpha
 infTraj = inference(promp, test{1}, M, s_ref, c, h, test{1}.nbData, expNoise, expAlpha);
 
 %draw the infered movement
-drawInference(promp,infTraj, test{1},s_ref);
+drawInference(promp,inputName,infTraj, test{1},s_ref);

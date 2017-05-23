@@ -20,7 +20,7 @@ M(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-procentData = 40; %number of data with what you try to find the correct movement
+percentData = 45; %number of data with what you try to find the correct movement
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
 %some variable computation to create basis function, you might have to
@@ -52,22 +52,34 @@ connection = initializeConnection
 %%
 
 %recover the data 
-t{1} = loadTrajectory('Data/bas', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
-t{2} = loadTrajectory('Data/haut', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{1} = loadTrajectory('Data/heights/bottom', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{2} = loadTrajectory('Data/heights/top', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{3} = loadTrajectory('Data/heights/middle', 'front', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+
+drawRecoverData(t{1}, inputName, 'Specolor','b','namFig', 1);
+drawRecoverData(t{1}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','b','namFig',2);
+drawRecoverData(t{2}, inputName, 'Specolor','r','namFig',1);
+drawRecoverData(t{2}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','r','namFig',2);
+drawRecoverData(t{3}, inputName, 'Specolor','g','namFig',1);
+drawRecoverData(t{3}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','g','namFig',2);
 
 %take one of the trajectory randomly to do test{1}, the others are stocked in
 %train.
-[train{1},test{1}] = partitionTrajectory(t{1},1,procentData,s_bar,3);
-[train{2},test{2}] = partitionTrajectory(t{2},1,procentData,s_bar,3);
+[train{1},test{1}] = partitionTrajectory(t{1},1,percentData,s_bar,3);
+[train{2},test{2}] = partitionTrajectory(t{2},1,percentData,s_bar,3);
+[train{3},test{3}] = partitionTrajectory(t{3},1,percentData,s_bar);
 
 %Compute the distribution for each kind of trajectories.
 promp{1} = computeDistribution(train{1}, M, s_bar,c,h);
 promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
+promp{3} = computeDistribution(train{3}, M, s_bar,c,h);
 
 %drawDistribution(promp{3}, inputName,s_bar, 1:3);
-drawDistribution(promp{2}, inputName,s_bar,1:3);
-drawDistribution(promp{1}, inputName,s_bar,1:3);
-
+% drawDistribution(promp{2}, inputName,s_bar,1:3);
+% drawDistribution(promp{1}, inputName,s_bar,1:3);
+drawDistribution(promp{1}, inputName,s_bar,[1:3], 'col', 'b');
+drawDistribution(promp{2}, inputName,s_bar,[1:3], 'col', 'r');
+drawDistribution(promp{3}, inputName,s_bar,[1:3], 'col', 'g');
 cont=1;
 while( cont==1)
     i = length(promp)+1;
@@ -91,10 +103,11 @@ while (cont==1)
     w = computeAlpha(test{trial}{1}.nbData,t, nbInput);
     promp{1}.w_alpha= w{1};
     promp{2}.w_alpha= w{2};
+    promp{3}.w_alpha= w{3};
 
     %begin to play the first nbFirstData
     replayObservedData(test{trial}{1},connection);
-tic;
+    tic;
     %Recognition of the movement
     [alphaTraj,type, x] = inferenceAlpha(promp,test{trial}{1},M,s_bar,c,h,test{trial}{1}.nbData, expNoise, 'MO');
     infTraj = inference(promp, test{trial}{1}, M, s_bar, c, h, test{trial}{1}.nbData, expNoise, alphaTraj);
@@ -104,7 +117,7 @@ tic;
     continueMovement(infTraj,connection, test{trial}{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
 
     %draw the infered movement
-    drawInference(promp,infTraj, test{trial}{1},s_bar)
+    drawInference(promp,inputName,infTraj, test{trial}{1},s_bar)
     cont = input('Do you want to infer again? (Y=1, N=0)');
 end
    

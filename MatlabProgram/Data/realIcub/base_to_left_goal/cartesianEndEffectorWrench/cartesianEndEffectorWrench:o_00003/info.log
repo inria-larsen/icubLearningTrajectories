@@ -1,0 +1,3 @@
+Type: Bottle;
+[1494329903.470175] /wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o [connected]
+[1494329911.473203] /wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o [disconnected]

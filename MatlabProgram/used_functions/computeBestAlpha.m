@@ -122,6 +122,6 @@ function [value,bestproba, xest] = computeBestAlpha(ProMP, obsTraj, expNoise, nb
 % else
 % legend(fig([best,oth, real, offst]),'Best \alpha', 'Other \alpha', 'Real trajectory ', 'Trajectory with offset');
 % end
-   
+%    
     
 end

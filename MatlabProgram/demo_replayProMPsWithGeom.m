@@ -29,11 +29,9 @@ procentData = 40; %number of data with what you try to find the correct movement
 dimRBF = 0; 
 for i=1:size(M,2)
     dimRBF = dimRBF + M(i)*nbInput(i);
+    c(i) = 1.0 / (M(i));%center of gaussians
+    h(i) = c(1)/M(i); %bandwidth of gaussians
 end
-c(1) = 1.0 / (M(1));%center of gaussians
-c(2) = 1.0 / (M(2));
-h(1) = c(1)/M(1); %bandwidth of gaussians
-h(2) = c(2)/M(2);
 
 %information: 
 %port open: port(/matlab/write)
@@ -42,19 +40,19 @@ connection = initializeConnection
 
 %You have to launch:
 %1. yarpserver
-%2. gazebo with worldPROMPS
+%2. gazebo with WORLD2HEIGHTS
 %4. Create another terminal and launch:  iKinCartesianSolver --robot icubGazeboSim --part left_arm
 %5. Launch: simCartesianControl --robot icubGazeboSim in this terminal
 %6. Then, launch the program. It will show you the learned distribution.
 %Then, it will wait for a connection. Do it by:
 %7. ./Cpp/build/bin/replay 
 %8 connect the port /matlab/write and /replay/read in the two sens.
-%9 On matlab, give the number of the trajectory to replay and watch/
-%%
+%9 On matlab, give the number of the trajectory to replay and watch.
+
 
 %recover the data 
-t{1} = loadTrajectory('Data/bas', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
-t{2} = loadTrajectory('Data/haut', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{1} = loadTrajectory('Data/heights/bottom', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{2} = loadTrajectory('Data/heights/top', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 %take one of the trajectory randomly to do test{1}, the others are stocked in
 %train.
@@ -65,7 +63,6 @@ t{2} = loadTrajectory('Data/haut', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Sp
 promp{1} = computeDistribution(train{1}, M, s_bar,c,h);
 promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
 
-% %drawDistribution(promp{3}, inputName,s_bar, 1:3);
 % drawDistribution(promp{2}, inputName,s_bar,1:3);
 % drawDistribution(promp{1}, inputName,s_bar,1:3);
 
@@ -82,7 +79,6 @@ while( cont==1)
 end
 
 
-
 cont=1;
 while( cont==1)
     
@@ -95,16 +91,17 @@ while( cont==1)
     %Recognition of the movement
     [alphaTraj,type, x] = inferenceAlpha(promp,test,M,s_bar,c,h,test.nbData, expNoise, 'MO');
     [infTraj, Treco] = inference(promp, test, M, s_bar, c, h, test.nbData, expNoise, alphaTraj, connection);
+    
+    %to ask icub to say the label of the recognize trajectory
     sayType(promp{Treco}.traj.label, connection);
     
     %replay the movement into gazebo
     continueMovement(infTraj,connection, test.nbData,s_bar, promp{type}.PHI_norm,inputName);
     cont = input('Do you want to infer again? (yes=1, no=0)');
 end
-    %draw the infered movement
-%    drawInference(promp,infTraj, test,s_bar)
-%    cont = input('Do you want to infer again? (Y=1, N=0)');
 
-   
+%draw the infered movement
+%drawInference(promp,inputName,infTraj, test,s_bar)
+
 %close the port and the program replay.
 closeConnection(connection);

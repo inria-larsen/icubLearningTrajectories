@@ -1,0 +1,4 @@
+Type: Bottle;
+[1494331032.919956] /icub/cartesianController/left_arm/state:o [connected]
+[1494331039.631686] /icub/cartesianController/left_arm/state:o [disconnected]
+[1494331039.634829] /icub/cartesianController/left_arm/state:o [connected]

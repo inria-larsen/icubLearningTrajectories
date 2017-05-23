@@ -11,7 +11,7 @@ warning('off','MATLAB:colon:nonIntegerIndex')
 addpath('used_functions'); %add some fonctions we use.
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
-DataPath = 'Data/Test_WBD/Left';
+DataPath = 'Data/FLT/left';
 inputName = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
 
 refTime=100;
@@ -46,13 +46,14 @@ t{1} = loadTrajectory(DataPath, 'Test_WBD', 'refNb', refTime, 'nbInput',nbInput,
 [train1,test{1}] = partitionTrajectory(t{1},1,procentData,refTime);
 
 %plot recoverData
-%drawRecoverData(t{1}, inputName, 'Specific');
+drawRecoverData(t{1}, inputName, 'Specolor','m','namFig', 1);
+drawRecoverData(t{1}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','b','namFig',2);
 
 %Compute the distribution for each kind of trajectories.
 promp{1} = computeDistribution(train1, M, refTime,c,h);
 
 %plot distribution
-%drawDistribution(promp{1}, inputName,refTime, 1:3);
+drawDistribution(promp{1}, inputName,refTime, 1:3);
 
 trial = 1%size(promp,1)+1;
 while (trial > size(promp,1) || trial < 1)
@@ -85,6 +86,6 @@ infTrajME = inference(promp, test{1}, M, refTime, c, h, test{1}.nbData, expNoise
 % drawInference(promp,infTrajMO, test{1},refTime, 'Name', 'Model');
 % drawInference(promp,infTrajML, test{1},refTime, 'Name', 'Maximum likelihood');
 % drawInference(promp,infTrajDI, test{1},refTime, 'Name', 'Distance');
-drawInference(promp,infTrajME, test{1},refTime, 'Name', 'Mean');
+drawInference(promp,inputName,infTrajME, test{1},refTime, 'Name', 'Mean');
 
 

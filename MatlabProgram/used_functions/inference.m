@@ -7,7 +7,15 @@ function [infTraj, typeReco] = inference(promps,obsTraj,M,s_bar,c,h,nbData, expN
 
 nbKindOfTraj = length(promps);
 nbInput= promps{1}.traj.nbInput;
-
+% nbInputReco = nbInput;
+% if(~isempty(varargin))
+%     for i=1:length(varargin)
+%         if(strcmp(varargin{i}, 'nbInput')==1)
+%             i=i+1;
+%             nbInputReco = varargin{i};
+%         end
+%     end
+% end
 
 %computation of the loglikelihood for each trajectory using only cartesian
 %coordinates
