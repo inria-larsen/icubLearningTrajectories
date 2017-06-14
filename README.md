@@ -51,9 +51,7 @@ yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /recor
 
 Now, when you press the black button of the geomagic, it will creates a file record0.txt. You can learn many trajectories (that will create other files as record1.txt, record2.txt and so on).
 
-Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and use these .ini files when you launch yarpmanager. To do that, you can:
-1. In a rough way, put this files in your home directory.
-2. Modify the $YOURPATH/APP/recordTrajectoriesGeomagic.xml and add for the different application the parameter --from $YOURPATH/CppProgram/configFiles
+Remark: If you have trouble with the ini files (not found), you can go into the folder CppProgram/configFiles and use these .ini files when you launch yarpmanager.
 
 # Pre-traitment to use the Matlab scripts to learn and infer trajectories.
 
