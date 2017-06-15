@@ -1,7 +1,7 @@
 
 A video tutorial show how to record trajectories with the icubSim in Gazebo is available here:
 
-\url{https://youtu.be/NR78BB0f4Ss}.
+\url{https://youtu.be/ZydXf6wrXgY}.
  
 A video showing the inference ability of the robot in the simulation using the haptic device Geomagic Touch is presented here:
 
@@ -12,4 +12,4 @@ When the user release the button, the robot reaches the goal ball that correspon
 
 A video shows the inference ability of the robot in the offline simulation, with plot representations of the results:
 
-\url{https://www.youtube.com/watch?v=Kt6TAs9dS9c}
+\url{https://youtu.be/NR78BB0f4Ss}
