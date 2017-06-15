@@ -20,7 +20,7 @@ M(2) = 5; %number of basis functions for the second type of input
 
 %variable tuned to achieve the trajectory correctly
 expNoise = 0.00001;
-percentData = 45; %number of data with what you try to find the correct movement
+percentData = 48; %number of data with what you try to find the correct movement
 %%%%%%%%%%%%%% END VARIABLE CHOICE
 
 %some variable computation to create basis function, you might have to
@@ -54,7 +54,7 @@ connection = initializeConnection
 %recover the data 
 t{1} = loadTrajectory('Data/heights/bottom', 'bottom', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 t{2} = loadTrajectory('Data/heights/top', 'top', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
-t{3} = loadTrajectory('Data/heights/middle', 'front', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
+t{3} = loadTrajectory('Data/heights/middle', 'middle', 'refNb', s_bar, 'nbInput',nbInput, 'Specific', 'FromGeom');
 
 drawRecoverData(t{1}, inputName, 'Specolor','b','namFig', 1);
 drawRecoverData(t{1}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','b','namFig',2);
@@ -66,7 +66,7 @@ drawRecoverData(t{3}, inputName, 'Interval', [4 7 5 8 6 9], 'Specolor','g','namF
 %take one of the trajectory randomly to do test{1}, the others are stocked in
 %train.
 [train{1},test{1}] = partitionTrajectory(t{1},1,percentData,s_bar,3);
-[train{2},test{2}] = partitionTrajectory(t{2},1,percentData,s_bar,3);
+[train{2},test{2}] = partitionTrajectory(t{2},1,percentData,s_bar,1);
 [train{3},test{3}] = partitionTrajectory(t{3},1,percentData,s_bar);
 
 %Compute the distribution for each kind of trajectories.

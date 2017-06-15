@@ -72,8 +72,9 @@ if(isInterval==1)
 else
     for vff=1:nbInput(1)
         subplot(nbInput(1),1,vff);
-
-        interval =  test.realTime(test.totTime) / test.totTime
+        if(isfield(test, 'totTime'))
+            interval =  test.realTime(test.totTime) / test.totTime
+        end
         RTInf = infTraj.timeInf*0.01;
         intervalInf = RTInf / infTraj.timeInf;
         i = infTraj.reco;%reco{1};
@@ -85,9 +86,11 @@ else
 
         nameFig = visualisation(infTraj.PHI*infTraj.mu_w, sum(nbInput), infTraj.timeInf, vff, 'r', nameFig,[intervalInf:intervalInf:RTInf]);
         newG = size(nameFig,2);
-        nameFig(size(nameFig,2) + 1) = plot( [interval:interval: test.realTime(test.totTime)],test.yMat(:,vff), ':k', 'linewidth', 2);
-        %visualisation2(test.yMat,sum(nbInput), test.totTime,vff, ':k', 1, nameFig);hold on;
-        dtG = size(nameFig,2);
+        if(isfield(test, 'interval'))
+            nameFig(size(nameFig,2) + 1) = plot( [interval:interval: test.realTime(test.totTime)],test.yMat(:,vff), ':k', 'linewidth', 2);
+            %visualisation2(test.yMat,sum(nbInput), test.totTime,vff, ':k', 1, nameFig);hold on;
+            dtG = size(nameFig,2);
+        end
         nameFig(size(nameFig,2) + 1) = plot([intervalInf:intervalInf:test.nbData*intervalInf],test.partialTraj(1+ test.nbData*(vff-1):test.nbData + test.nbData*(vff-1)),'ok','linewidth',3);
         dnG = size(nameFig,2);
 
@@ -103,8 +106,11 @@ else
              end
              set(gca, 'fontsize', 20)
     end
-    legend(nameFig(1,[dtG, dnG, prevG, newG]),'real trajectory', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
-
+    if(exist('dtG'))
+        legend(nameFig(1,[dtG, dnG, prevG, newG]),'real trajectory', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
+    else
+        legend(nameFig(1,[dnG, prevG, newG]), 'observations','prior proMP', 'prediction', 'Location', 'southeast');
+    end
 end
 
 

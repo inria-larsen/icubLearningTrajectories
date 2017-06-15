@@ -3,10 +3,9 @@
     <description>Module to record several trajectories using the Geomagic Touch with icubGazebo</description>
     <version>1.0</version>
 
-
-    <module>
+<module>
         <name>wholeBodyDynamicsTree</name>
-        <parameters>--autoconnect --robot icubGazeboSim</parameters>
+        <parameters>--part left_arm --autoconnect</parameters>
         <dependencies>
             <port timeout="10">/icubGazeboSim/left_arm/state:o</port>
         </dependencies>
@@ -37,7 +36,6 @@
         <stdio>icub01</stdio>
         <node>icub01</node>
     </module>
-    
     
     
   <module>  

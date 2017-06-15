@@ -19,13 +19,11 @@ typeRecover= '.mat'; %or .txt, it depends on your choice of data file.
 inputName = {'z[m]'};%label of your inputs
 s_ref=100; %reference number of samples
 nbInput(1) = 1; %number of inputs used during the inference (here Cartesian position)
-%nbInput(2) = 2;%if you had some inputs that are not used to recognize the correct movement primitive
-M(1) = 5; %number of basis functions to represent nbInput(1)
-%M(2) = 10; %number of basis functions to represent nbInput(2)
+M(1) = 50; %number of basis functions to represent nbInput(1)
 
 %This variable is the expected data noise, you can tune this parameter to achieve the trajectory correctly
 expNoise = 0.00001;
-percentData = 30; %percent of observed data during the inference
+percentData = 50; %percent of observed data during the inference
 %type of cost function used to infer the modulation time
 %('MO':model/'ML'maximum likelihood/ 'ME' average/'DI' distance).
 choice = 'MO' ;
@@ -38,7 +36,7 @@ for i=1:size(M,2)
     dimRBF = dimRBF + M(i)*nbInput(i);
 end
 c(1) = 1.0 / (M(1)); %center of gaussians
-h(1) = c(1)/M(1); %bandwidth of the gaussians
+h(1) = c(1)/(M(1)); %bandwidth of the gaussians
 
 if(strcmp(typeRecover,'.mat')==1)
     load(DataPath);

@@ -87,4 +87,5 @@ infTraj = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, al
 
 %draw the infered movement
 drawInferenceRescaled(promp,inputName ,infTraj, test{1},s_bar)
+drawInference(promp,inputName,infTraj, test{1},s_bar)
 
