@@ -46,7 +46,7 @@ alias gazebo_3goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibg
 alias gazebo_promps="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf"
 
 
-# launching the Geomagic application
+# Launching the Geomagic application
 
 Its utilization requires to have installed the geomagic touch driver and to have done the pre-installation of the Geomagic Touch software. Then, you can launch:
 1. yarpserver
