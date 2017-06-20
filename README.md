@@ -1,6 +1,6 @@
 # icub-learning-arm-trajectories
 
-If you have some questions or remarks, please send an email to oriane.dermy@inria.fr.
+If you have some questions or remarks, please send an email to oriane.dermy@inria.fr. 
 
 This program is a subpart of the project "icub-learning-trajectories" composed of different programs:
 
@@ -19,13 +19,19 @@ Videos (tutorial and samples) are available in the "Videos" folder.
 
 In this README, "$YourPath" refers to the path where this software has been cloned.
 
-## PRE-INSTALLATION:
+## PRE-INSTALLATION and requirement:
+
+This toolbox has been created on Ubuntu 14 with the iCubGazeboSim.  
+
 You need to have installed:  
 icub-main  
 yarp  
 gazebo  
 WholeBodyDynamicsTree  
 The Geomagic Touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
+
+A tutorial that explains how to install these modules is available at: https://github.com/inria-larsen/icub-manual/wiki/How-to-install-the-software-on-your-machine-(Ubuntu-14)
+
 
 ## INSTALLATION:
 `cd CppProgram`   
@@ -40,7 +46,7 @@ alias gazebo_3goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibg
 alias gazebo_promps="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf"
 
 
-# launching the Geomagic application
+# Launching the Geomagic application
 
 Its utilization requires to have installed the geomagic touch driver and to have done the pre-installation of the Geomagic Touch software. Then, you can launch:
 1. yarpserver
