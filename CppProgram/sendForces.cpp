@@ -37,7 +37,6 @@
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
 
-#include <hapticdevice/IHapticDevice.h>
 //#include "cartesianClient.h"
 
 #define DEG2RAD     (M_PI/180.0)
@@ -48,7 +47,6 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-using namespace hapticdevice;
 
 class RecordWithGeomagic: public yarp::os::RFModule
 {

@@ -75,7 +75,7 @@ protected:
 
 public:
  
-    TestReplay(int verbose = 1): RFModule()
+    TestReplay(int verbose = 2): RFModule()
     {
 	    verbositylevel = verbose; 
     }
@@ -83,8 +83,8 @@ public:
     bool configure(ResourceFinder &rf)
     {    
 		string name=rf.check("name",Value("test_feedback")).asString().c_str();
-        robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
-		if(robot =="icubGazeboSim") trajTime = 0.1;
+        robot=rf.check("robot",Value("icubSim")).asString().c_str();
+		if(robot =="icubSim") trajTime = 0.1;
 		else trajTime = 0.5;
 		string part=rf.check("part",Value("left_arm")).asString().c_str();	
         bool swap_x=rf.check("swap_x",Value("false")).asBool();
@@ -173,6 +173,8 @@ public:
 				if (inputForces!=NULL)  //WBDT forces informatipn
 				{
 					fext[i] = inputForces->get(i).asDouble();
+					//cout << "Read forces/wrench." << endl;
+
 				}
 				else // if it didn't receive forces information return -1 (for example not connected)
 				{	
@@ -192,16 +194,16 @@ public:
 				{
 					client.setTrajectoryTime(3.0);
 					if(verbositylevel == 1) cout << "Rythme slow to begin the movement" << endl;
-					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od);
-					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
+					if("icubSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
 					flagReturn = false;
 				}else //When the robot has to move
 				{
 					client.setTrajectoryTime(trajTime);
-					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od); // new target is xd,od
-					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);
+					if("icubSim" != robot) client.waitMotionDone(0.04);
 				}
 				
 				client.getRobotPose(x,o); // get current pose as x,o
@@ -209,10 +211,12 @@ public:
 				nbIt++;
 			}while(dist > 0.001 && nbIt< 100);
 			
+			if(verbositylevel ==1)
+			{
 			yInfo("Current position = (%s)",x.toString(3,3).c_str());
 			yInfo("Target position = (%s)",xd.toString(3,3).c_str());
 			yInfo("Compliance      = (%f)\n",compliance);
-			
+		}
 			//Give to matlab forces information
             Bottle& output = port.prepare();
             output.clear();

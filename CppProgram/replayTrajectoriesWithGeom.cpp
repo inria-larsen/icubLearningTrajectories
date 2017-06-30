@@ -40,8 +40,6 @@
 #include <yarp/dev/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
-
-#include <hapticdevice/IHapticDevice.h>
 #include "cartesianClient.h"
 
 #define DEG2RAD     (M_PI/180.0)
@@ -52,8 +50,6 @@ using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-//using namespace yarp::math;
-using namespace hapticdevice;
 
 class RecordWithGeomagic: public yarp::os::RFModule
 {
@@ -145,7 +141,7 @@ public:
     bool configure(ResourceFinder &rf)
     {    
 		string name=rf.check("name",Value("test_feedback")).asString().c_str();
-        robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
+        robot=rf.check("robot",Value("icubSim")).asString().c_str();
 		part=rf.check("part",Value("left_arm")).asString().c_str();	
     	
         string geomagic=rf.check("geomagic",Value("geomagic")).asString().c_str();
@@ -173,7 +169,7 @@ public:
 		igeo->setFeedback(feedback);
 
 
-		if(robot =="icubGazeboSim") trajTime = 0.1;
+		if(robot =="icubSim") trajTime = 0.1;
 		else trajTime = 0.5;
 		//initialize variable used in this program
 		xd.resize(3); // desired position of the robot (matlab order)
@@ -402,16 +398,16 @@ public:
 				{
 					client.setTrajectoryTime(3.0);
 					if(verbosity == 1) cout << "Rythme slow to begin the movement" << endl;
-					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od);
-					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
+					if("icubSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
 					flagReturn = false;
 				}else //When the robot has to move
 				{
 					client.setTrajectoryTime(trajTime);
-					if("icubGazeboSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od); // new target is xd,od
-					if("icubGazeboSim" != robot) client.waitMotionDone(0.04);
+					if("icubSim" != robot) client.waitMotionDone(0.04);
 				}
 				
 				client.getRobotPose(x,o); // get current pose as x,o

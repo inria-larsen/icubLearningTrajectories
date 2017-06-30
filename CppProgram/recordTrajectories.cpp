@@ -40,8 +40,6 @@
 #include <yarp/dev/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/math/Math.h>
-
-#include <hapticdevice/IHapticDevice.h>
 #include "cartesianClient.h"
 
 #define DEG2RAD     (M_PI/180.0)
@@ -53,7 +51,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 //using namespace yarp::math;
-using namespace hapticdevice;
 
 class RecordWithGeomagic: public yarp::os::RFModule
 {
@@ -172,7 +169,7 @@ public:
     bool configure(ResourceFinder &rf)
     {    
 		string name=rf.check("name",Value("test_feedback")).asString().c_str();
-        string robot=rf.check("robot",Value("icubGazeboSim")).asString().c_str();
+        string robot=rf.check("robot",Value("icubSim")).asString().c_str();
 		string part=rf.check("part",Value("left_arm")).asString().c_str();	
     	folderName = rf.check("folder",Value("../../../MatlabProgram/Data/newTraj")).asString().c_str();	
         string geomagic=rf.check("geomagic",Value("geomagic")).asString().c_str();
@@ -229,7 +226,6 @@ public:
     bool updateModule()
     { 
         Vector buttons,pos,rpy;
-        
         //read geomagic informations (buttons/position and orientation)
         igeo->getButtons(buttons);
         igeo->getPosition(pos);
@@ -270,7 +266,6 @@ public:
 			
 			//read actual time
 			currentTime = Time::now();
-			
 			// read forces given by the wholeBodyDynamicsTree programm
 			Bottle *input = port.read(false);
 			if (input!=NULL) //record information with forces
@@ -321,8 +316,6 @@ int main(int argc,char *argv[])
     Network yarp;
     int r=0;
 
-    cout << "begin" <<endl;
-
     if (!yarp.checkNetwork())
     {
         yError("YARP server not found!");
@@ -330,9 +323,7 @@ int main(int argc,char *argv[])
     }
 
     ResourceFinder rf;
-    cout << "before conf" <<endl;
     bool ret = rf.configure(argc,argv);
-	cout << "after conf" <<endl;
 	if(ret==false)
 	{
 			for(int i=0; i<100;i++)
