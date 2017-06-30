@@ -61,13 +61,10 @@ At the beginning of this cpp function, you can read further information.
 
 1. Follow the section "launching the Geomagic application"
 2. gazebo_3goal
-3. Launch these applications:
-wholeBodyDynamicsTree --part left_arm --autoconnect
-simCartesianControl --robot icubGazeboSim
-iKinCartesianSolver --robot iCubGazeboSim -context simCartesianControl --part left_arm
 3. yarpmanager
 From yarpmanager, open the xml file (in folder $YourPath/App) and launch:
-recordTrajectoriesWithGeomagic
+wholeBodyDynamicsTree, yarprobotinterface, iKinCartesianSolver, and recordTrajectoriesWithGeomagic
+
 4. Connect from this same xml file the port:
 yarp connect /wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o /record/read
 
@@ -107,8 +104,8 @@ For this program, you have to call yarp from Matlab (see [this link](http://wiki
 1. Follow the section "launching the Geomagic application"
 2. Run demo_replayProMPs.m on Matlab.
 This programm will then be waiting for port connexion with the message "Please connect to a bottle sink (e.g. yarp read) and press a button."
-3. run yarpmanager. Open the xml file (in folder /App) and launch one by one the modules:
-- gazebo
+3. Run gazebo_3goal
+3. Run yarpmanager. Open the xml file (in folder /App) and launch one by one the modules:
 - wholeBodyDynamicsTree
 - iKinCartesianSolver 
 - simCartesianControl 
