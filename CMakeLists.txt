@@ -19,7 +19,7 @@ include(ICUBcontribHelpers)
 include(ICUBcontribOptions)
 icubcontrib_set_default_prefix()
 
-#add_subdirectory(CppProgram)
+add_subdirectory(CppProgram)
 add_subdirectory(App)
 
 icubcontrib_add_uninstall_target()

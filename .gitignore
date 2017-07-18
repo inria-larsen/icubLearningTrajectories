@@ -12,10 +12,14 @@
 *.dvi
 *.ind
 *.bak
+
+
 /MatlabProgram/tmp_analyse
 
 # Mac finder files and hidden folders
 .DS_Store
 
-# the compiled PDF file - to avoid conflicts
-ProMPs-icub.pdf
+*~
+
+# build folder
+build/
