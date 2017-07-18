@@ -1,0 +1,21 @@
+# Latex files
+
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.idx
+*.toc
+*.bbl
+*.blg
+*.tmp
+*.dvi
+*.ind
+*.bak
+/MatlabProgram/tmp_analyse
+
+# Mac finder files and hidden folders
+.DS_Store
+
+# the compiled PDF file - to avoid conflicts
+ProMPs-icub.pdf
