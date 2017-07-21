@@ -10,11 +10,10 @@ addpath('used_functions');
 warning('off','MATLAB:colon:nonIntegerIndex')
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
-DataPath = 'Data/traj1';
-inputName = {'x[m]','y[m]','z[m]','f_x[N]','f_y[N]','f_z[N]', 'm_x[Nm]','m_y[Nm]','m_z[Nm]'};
+inputName = {'x[m]','y[m]','z[m]', 'a1[°]','a2[°]','a3[°]', 'a4[°]'};
 s_bar=100;
 nbInput(1) = 3; %number of input used during the inference (here cartesian position)
-nbInput(2) = 6; %other inputs (here forces and wrenches)
+nbInput(2) = 4; %other inputs (here forces and wrenches)
 
 M(1) = 5; %number of basis functions for the first type of input
 M(2) = 5; %number of basis functions for the second type of input
@@ -43,7 +42,7 @@ a = input('Press enter when the robot has closed its hand');
 %display(connexion.graspA.toString());
 
 %retrieve trajectories done with the real iCub
-load('Data/realIcub.mat');
+load('Data/icub_frontiers.mat');
 for i=1:length(t)
 t{i}.nbInput = nbInput;
 end
@@ -53,12 +52,10 @@ end
 %train.
 [train{1},test{1}] = partitionTrajectory(t{1},1,percentData,s_bar);
 [train{2},test{2}] = partitionTrajectory(t{2},1,percentData,s_bar);
-[train{3},test{3}] = partitionTrajectory(t{3},1,percentData,s_bar);
 
 %Compute the distribution for each kind of trajectories.
 promp{1} = computeDistribution(train{1}, M, s_bar,c,h);
 promp{2} = computeDistribution(train{2}, M, s_bar,c,h);
-promp{3} = computeDistribution(train{3}, M, s_bar,c,h);
 
 % drawDistribution(promp{2}, inputName,s_bar,1:3);
 % drawDistribution(promp{1}, inputName,s_bar,1:3);
@@ -84,7 +81,6 @@ while( cont==1)
     w = computeAlpha(test{1}.nbData,t, nbInput);
     promp{1}.w_alpha= w{1};
     promp{2}.w_alpha= w{2};
-    promp{3}.w_alpha= w{3};
 
     %Recognition of the movement
     [alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,s_bar,c,h,test{1}.nbData, expNoise, 'MO');
@@ -107,7 +103,7 @@ while( cont==1)
 end
 
 %draw the infered movement
-%drawInference(promp,inputName,infTraj, test,s_bar)
+drawInference(promp,inputName,infTraj, test{1},s_bar)
 
 %close the port and the program replay.
 closeConnectionRealIcub(connexion);
