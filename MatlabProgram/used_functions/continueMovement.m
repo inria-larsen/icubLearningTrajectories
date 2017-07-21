@@ -56,7 +56,7 @@ connection.b.clear();
 connection.b.addDouble(0.0);
 connection.port.write(connection.b);
 connection.port.read(connection.c);
-disp(connection.c);
+%disp(connection.c);
 
 % msg = input('Send q to quit\n', 's');
 % if(msg == 'q')

@@ -19,7 +19,7 @@ data = promp.PHI_norm*promp.mu_w;
         val(t,:)
         disp('We receive: ');
         connection.port.read(connection.c);
-        disp(connection.c);
+%        disp(connection.c);
     end
     
     %Send information about the end of the trajectory and verify it
@@ -28,5 +28,5 @@ data = promp.PHI_norm*promp.mu_w;
     connection.b.addDouble(0.0)
     connection.port.write(connection.b);
     connection.port.read(connection.c);
-    disp(connection.c);
+%    disp(connection.c);
 end

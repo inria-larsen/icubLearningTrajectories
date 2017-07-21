@@ -73,7 +73,7 @@ else
     for vff=1:nbInput(1)
         subplot(nbInput(1),1,vff);
         if(isfield(test, 'totTime'))
-            interval =  test.realTime(test.totTime) / test.totTime
+            interval =  test.realTime(test.totTime) / test.totTime;
         end
         RTInf = infTraj.timeInf*0.01;
         intervalInf = RTInf / infTraj.timeInf;

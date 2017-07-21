@@ -4,6 +4,7 @@ function connection = initializeConnection
 
 
 LoadYarp;
+
 import yarp.Port;
 import yarp.Bottle;
 
