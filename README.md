@@ -31,19 +31,22 @@ WholeBodyDynamicsTree
 The Geomagic Touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 
 A tutorial that explains how to install these modules is available at: https://github.com/inria-larsen/icub-manual/wiki/How-to-install-the-software-on-your-machine-(Ubuntu-14)
+Note that wholeBodyDynamicsTree is currently included in the codyco-superbuild project.
 
 
 ## INSTALLATION:
-`cd CppProgram`   
+`git clone https://github.com/inria-larsen/icubLearningTrajectories` 
+`cd iCubLearningTrajectories`   
 `mkdir build`   
 `cd build`   
 `ccmake ../`   
 `make install`   
 
-Then, you can add some aliases to simplify the utilisation of our Gazebo world (that contains iCubGazeboSim and some balls that represents goals to reach). For example add these aliases:
-alias gazebo_2goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so world2height.sdf"
-alias gazebo_3goal="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so world3height.sdf"
-alias gazebo_promps="cd $YOURPATH/CppProgram/configFiles/myWorld && gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf"
+Then, you can add some aliases to simplify the utilisation of our Gazebo world (that contains icubSim and some balls that represents the targets to reach). For example add these aliases:
+alias gazebo_2goal="cd $SHARE_GAZEBO_MODELS/models/icub_with_two_vertical_targets && gazebo -slibgazebo_yarp_clock.so world2height.sdf"
+alias gazebo_3goal="cd $SHARE_GAZEBO_MODELS/models/icub_with_three_vertical_targets && gazebo -slibgazebo_yarp_clock.so world3height.sdf"
+alias gazebo_promps="cd $SHARE_GAZEBO_MODELS/models/icub_with_three_targets && gazebo -slibgazebo_yarp_clock.so worldPROMPS.sdf"
+where $SHARE_GAZEBO_MODELS is the PATH where you have your Gazebo models installed (in our case is /home/icub/software/share/gazebo).
 
 
 # Launching the Geomagic application
