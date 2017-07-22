@@ -27,6 +27,9 @@ connection.portGrasp=Port;
 connection.portGrasp.close;
 
 
+connection.portIG=Port;
+connection.portIG.close;
+
 disp('Going to open port /matlab/write');
 connection.port.open('/matlab/write');
 disp('Going to open port /matlab/ispeak');
@@ -39,6 +42,9 @@ disp('Going to open port /matlab/state');
 connection.portGrasp.open('/matlab/state');
 disp('Going to open port /matlab/grasp:o');
 connection.portGrasp.open('/matlab/grasp:o');
+disp('Going to open port /matlab/IG:o');
+connection.portGrasp.open('/matlab/IG:o');
+
 
 rep = input('Please connect to a bottle sink (e.g. yarp read/write) and press a button.\n');
 connection.b = Bottle;
@@ -49,9 +55,5 @@ connection.wrenches = Bottle;
 connection.state = Bottle;
 connection.grasp = Bottle;
 connection.graspAns =Bottle;
-
-
-
-
 
 end

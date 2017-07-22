@@ -90,6 +90,7 @@ while( cont==1)
     %to ask icub to say the label of the recognize trajectory
     sayType(promp{typeReco}.traj.label, connexion);
     
+    %continueMovementIcubGui(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     %replay the movement into gazebo
     %continueMovement(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     
@@ -101,9 +102,6 @@ while( cont==1)
     drawInference(promp,inputName,infTraj, test{1},s_bar)
     cont = input('Do you want to infer again? (yes=1, no=0)');
 end
-
-%draw the infered movement
-drawInference(promp,inputName,infTraj, test{1},s_bar)
 
 %close the port and the program replay.
 closeConnectionRealIcub(connexion);
