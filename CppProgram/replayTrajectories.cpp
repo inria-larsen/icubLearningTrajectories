@@ -93,7 +93,7 @@ public:
 		//initialize variable used in this program
 		xd.resize(3); // desired position of the robot (matlab order)
         od.resize(4); // desired orientation of the rbbot 
-        od[0]=-0.039151; od[1]=0.601265; od[2]=-0.79809; od[3]=2.851949; //see serena-ivaldi/WoZ/app/basicfiles/action.conf for more information about this values
+        //od[0]=-0.039151; od[1]=0.601265; od[2]=-0.79809; od[3]=2.851949; //see serena-ivaldi/WoZ/app/basicfiles/action.conf for more information about this values
         fext.resize(6); // external forces received by WBDT
 		flagReturn=true; // flag to order the robot to come back in the initial position.
 		compliance = 1; // compliance's value ordered by the matlab program.
@@ -105,6 +105,9 @@ public:
 		
         if (!initCartesian(part,1,1))
           return false;
+          
+        client.getRobotPose(xd,od); // get current pose as x,o
+
         return true;
        
     }
@@ -190,21 +193,21 @@ public:
             //Follow matlab's previous order
             do
             {
-				if(flagReturn==true) //When the robot receive an order to go back in the initial position
-				{
-					client.setTrajectoryTime(3.0);
-					if(verbositylevel == 1) cout << "Rythme slow to begin the movement" << endl;
-					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
-					client.goToPoseRobot(xd,od);
-					if("icubSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
-					flagReturn = false;
-				}else //When the robot has to move
-				{
+				//if(flagReturn==true) //When the robot receive an order to go back in the initial position
+				//{
+					//client.setTrajectoryTime(3.0);
+					//if(verbositylevel == 1) cout << "Rythme slow to begin the movement" << endl;
+					//if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
+					//client.goToPoseRobot(xd,od);
+					//if("icubSim" != robot) client.waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
+					//flagReturn = false;
+				//}else //When the robot has to move
+				//{
 					client.setTrajectoryTime(trajTime);
 					if("icubSim" != robot) client.goToPoseSyncRobot(xd,od);   // send request and wait for reply
 					client.goToPoseRobot(xd,od); // new target is xd,od
 					if("icubSim" != robot) client.waitMotionDone(0.04);
-				}
+				//}
 				
 				client.getRobotPose(x,o); // get current pose as x,o
 				dist = (x[0] -xd[0])*(x[0]-xd[0]) + (x[1] -xd[1])*(x[1]-xd[1]) + (x[2] -xd[2])*(x[2]-xd[2]);

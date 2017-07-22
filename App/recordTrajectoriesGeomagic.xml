@@ -4,8 +4,8 @@
     <version>1.0</version>
 
 <module>
-        <name>wholeBodyDynamicsTree</name>
-        <parameters>--part left_arm --autoconnect</parameters>
+        <name>wholeBodyDynamics</name>
+        <parameters>--part left_arm --autoconnect --headV2</parameters>
         <dependencies>
             <port timeout="10">/icubSim/left_arm/state:o</port>
         </dependencies>
@@ -70,7 +70,7 @@
 
 
     <connection>
-          <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
+          <from>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o</from>
           <to>/record/read</to>
           <protocol>udp</protocol>
     </connection>
@@ -87,7 +87,7 @@
           <protocol>udp</protocol>
     </connection>
     <connection>
-          <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
+          <from>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o/from>
           <to>/replay/readForces</to>
           <protocol>udp</protocol>
     </connection>
@@ -104,7 +104,7 @@
           <protocol>udp</protocol>
     </connection>
     <connection>
-          <from>/wholeBodyDynamicsTree/left_arm/cartesianEndEffectorWrench:o</from>
+          <from>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o</from>
           <to>/test/readForces</to>
           <protocol>udp</protocol>
     </connection>
