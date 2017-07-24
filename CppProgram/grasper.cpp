@@ -1,4 +1,11 @@
 /*
+ * Updated version
+ * 
+ * Author: Serena Ivaldi, Oriane Dermy
+ * email:  serena.ivaldi@inria.fr, oriane.dermy@inria.fr
+*/
+
+/*
  * Copyright (C) 2011-2012 MACSi Project
  * Author: Serena Ivaldi
  * email:  serena.ivaldi@isir.upmc.fr
@@ -132,28 +139,22 @@ Linux
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/all.h>
-#include <yarp/sig/Vector.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <yarp/dev/CartesianControl.h>
-#include <iCub/ctrl/math.h>
-#include <deque>
 #include <string>
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
 #include <math.h>
 
-// necessary for cartesian interfaces
-//YARP_DECLARE_DEVICES(icubmod)
 
 using namespace std;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
-using namespace yarp::math;
-using namespace iCub::ctrl;
+//using namespace yarp::math;
+//using namespace iCub::ctrl;
 
 
 // utils for printing parameters
@@ -165,9 +166,9 @@ using namespace iCub::ctrl;
 
 
 //===============================
-//        REACH
+//        GRASPER MODULE
 //===============================
-class ReachGraspModule: public RFModule
+class Grasper: public RFModule
 {
 private:
 
@@ -184,49 +185,24 @@ private:
             open_pince_1, close_pince_1, closer_pince_1,
             open_pince_2, close_pince_2,
             open_pince_3, close_pince_3;
-    Vector offset_x, offset_o;
-    Vector x_cur, o_cur, xd, od;
-    Vector left_init, right_init, left_reach, right_reach;
     //
-    Property optionsR, optionsL,optionsCartR, optionsCartL;
+    Property optionsR, optionsL;
     PolyDriver *ddR, *ddL;
-    //PolyDriver *ddCartR, *ddCartL;
     IPositionControl *iposR, *iposL,*ipos;
     IEncoders *iencR, *iencL,*ienc;
-    //ICartesianControl *icrtR, *icrtL, *icrt;
-    //
-    int startup_context_id_R, startup_context_id_L;
-    // torso
-    bool torsoEnabled, trackingEnabled;
-    //
-    double lift_offset;
-    //
-    double cartesian_tolerance;
+
     double trajectory_time;
-    Vector cartesian_tolerances;
 
 
 public:
 
     //---------------------------------------------------------
-    ReachGraspModule()
+    Grasper()
     {
         ddR=ddL=0;
-        //ddCartR=ddCartL=0;
         iposR=iposL=ipos=0;
         iencR=iencL=ienc=0;
-        //icrtR=icrtL=icrt=0;
         count=0;
-        offset_x.resize(3,0.0);
-        offset_o.resize(3,0.0);
-        left_init.resize(7,0.0);
-        right_init.resize(7,0.0);
-        left_reach.resize(7,0.0);
-        right_reach.resize(7,0.0);
-        cartesian_tolerances.resize(7,0.0);
-        torsoEnabled = false;
-        trackingEnabled = false;
-        cartesian_tolerance = 0.01;
         trajectory_time = 3.0;
     }
 
@@ -237,7 +213,7 @@ public:
     bool updateModule()
     {
         if(count%60==0)
-            cout<<" reach-grasper module alive since "<<(count/60)<<" mins ... "<<endl;
+            cout<<" grasper module alive since "<<(count/60)<<" mins ... "<<endl;
 
         if(count%600==0)
             cout<<"\n---------------------------------"<<endl
@@ -317,11 +293,6 @@ public:
         else if(config=="closer_pince_1")   moveFings(closer_pince_1);
         else if(config=="open_pince_3")     moveFings(open_pince_3);
         else if(config=="close_pince_3")    moveFings(close_pince_3);
-
-
-
-
-        
         else
         {
             reply.clear();
@@ -356,12 +327,6 @@ public:
 		}
 		cout << endl;
     }
-
- 
-
-
-
-
 
     //---------------------------------------------------------
     void readFings(ResourceFinder &rf, string s, Vector &v)
@@ -434,16 +399,11 @@ public:
         else
             robot   = "icubSim"; //by default simulator, so we dont break the real one
         //....................................................
-   
-        readValue(rf,"trajectory_time",trajectory_time,3.0);
-        //....................................................
 
         cout<<"Parameters from init file: "<<endl;
         DSCPA(name);
         DSCPA(robot);
-      
-        DSCPA(trajectory_time);
-
+     
         readFings(rf,"vels_hand",vels_hand);
         readFings(rf,"open_hand",open_hand);
         readFings(rf,"close_hand",close_hand);
@@ -455,9 +415,7 @@ public:
         readFings(rf,"close_pince_2",close_pince_2);
         readFings(rf,"open_pince_3",open_pince_3);
         readFings(rf,"close_pince_3",close_pince_3);
-        readParams(rf,"offset_x",offset_x,3);
-        readParams(rf,"offset_o",offset_o,4);
-
+       
      
         //now connect to the robot
         optionsR.put("device","remote_controlboard");
@@ -544,33 +502,33 @@ public:
 //---------------------------------------------------------
 int main(int argc, char * argv[])
 {
-
-    //YARP_REGISTER_DEVICES(icubmod)
-
-    Network yarp;
-    if (!yarp.checkNetwork())
-    {
-        cout<<"YARP network not available. Aborting."<<endl;
-        return -1;
-    }
-
+   
     ResourceFinder rf;
-    rf.setVerbose(true);
-    rf.setDefaultContext("grasper/conf");
-    rf.setDefaultConfigFile("../grasper.ini");
+    rf.setDefaultContext("learningTrajectoriesProMPFrontiers");
+    rf.setDefaultConfigFile("grasper.ini");
     rf.configure(argc,argv);
-
+  
     if (rf.check("help"))
     {
-        cout << "Options:" << endl << endl;
-        cout << "\t--from   fileName: input configuration file" << endl;
-        cout << "\t--context dirName: resource finder context"  << endl;
+		printf("\n");
+		yInfo("[GRASPER] Options:");
+        yInfo("  --context           path:   where to find the called resource (default learningTrajectoriesProMPFrontiers).");
+        yInfo("  --from              from:   the name of the .ini file (default grasper.ini).");
+        yInfo("  --name              name:   the name of the module (default grasper).");
+        yInfo("  --robot             robot:  the name of the robot. Default icub.");
+        printf("\n");
 
         return 0;
     }
+    
+    Network yarp;
+    if (!yarp.checkNetwork())
+    {
+        yError("YARP server not available!");
+        return -1;
+    }
 
-    /* create your module */
-    ReachGraspModule module;
+    Grasper module;
     module.runModule(rf);
 
     return 0;
