@@ -62,8 +62,11 @@ protected:
     
     //initialize cartesian controller
     bool initCartesian(const string &part, bool swap_x=false,bool swap_y=false)
-    {                        
+    {           
+		cout << "in initCartesian " << endl;             
         client.init(robot,part,swap_x,swap_y); 
+        cout << "after client.init " << endl;             
+        
         client.setPosePriority("position");
         return true;
     }

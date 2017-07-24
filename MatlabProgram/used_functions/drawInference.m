@@ -72,8 +72,10 @@ if(isInterval==1)
 else
     for vff=1:nbInput(1)
         subplot(nbInput(1),1,vff);
-        if(isfield(test, 'totTime'))
-            interval =  test.realTime(test.totTime) / test.totTime;
+        if(isfield(test, 'totTime') )
+            if(isfield(test, 'realTime'))
+                interval =  test.realTime(test.totTime) / test.totTime;
+            end
         end
         RTInf = infTraj.timeInf*0.01;
         intervalInf = RTInf / infTraj.timeInf;
@@ -87,7 +89,9 @@ else
         nameFig = visualisation(infTraj.PHI*infTraj.mu_w, sum(nbInput), infTraj.timeInf, vff, 'r', nameFig,[intervalInf:intervalInf:RTInf]);
         newG = size(nameFig,2);
         if(isfield(test, 'interval'))
-            nameFig(size(nameFig,2) + 1) = plot( [interval:interval: test.realTime(test.totTime)],test.yMat(:,vff), ':k', 'linewidth', 2);
+            if(isfield(test, 'realTime'))
+                nameFig(size(nameFig,2) + 1) = plot( [interval:interval: test.realTime(test.totTime)],test.yMat(:,vff), ':k', 'linewidth', 2);
+            end
             %visualisation2(test.yMat,sum(nbInput), test.totTime,vff, ':k', 1, nameFig);hold on;
             dtG = size(nameFig,2);
         end

@@ -62,8 +62,6 @@
      <module>  
    <name>yarpdev</name>
         <parameters>--device speech --lingware-context speech --default-language fr-FR --pitch 70 --speed 70</parameters>
-           <dependencies>
-        </dependencies>
         <stdio>icub01</stdio>
         <node>icub01</node>
     </module>
@@ -87,7 +85,7 @@
           <protocol>udp</protocol>
     </connection>
     <connection>
-          <from>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o/from>
+          <from>/wholeBodyDynamics/left_arm/cartesianEndEffectorWrench:o</from>
           <to>/replay/readForces</to>
           <protocol>udp</protocol>
     </connection>

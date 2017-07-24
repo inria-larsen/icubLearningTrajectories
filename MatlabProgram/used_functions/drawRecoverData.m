@@ -107,7 +107,7 @@ elseif(isInterval==1)
         subplot(length(interval)/2,2,cpt)
         for i=1:traj.nbTraj     
       
-            fig22 = visualisation(traj.y{i},length(list),traj.totTime(i), l, col,fig22,traj.realTime{i});hold on;
+            fig22 = visualisation(traj.y{i},length(list),traj.totTime(i), l, col,fig22);hold on;
         end
 
          ylabel(list{l}, 'fontsize', 24);
@@ -124,7 +124,7 @@ else
     for l=1:traj.nbInput(1)  
         subplot(traj.nbInput(1),1,l)
         for i=1:traj.nbTraj     
-            fig22 = visualisation(traj.y{i},length(list),traj.totTime(i), l, col,fig22,traj.realTime{i});hold on;
+            fig22 = visualisation(traj.y{i},length(list),traj.totTime(i), l, col,fig22);hold on;
         end
 
          ylabel(list{l}, 'fontsize', 24);
