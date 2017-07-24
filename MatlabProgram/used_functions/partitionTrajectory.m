@@ -21,7 +21,7 @@ if(percent==1)%want only one test
     test{1}.alpha = refTime / test{1}.totTime;
     test{1}.partialTraj = [];
     test{1}.nbData = ceil((percentData/100)*t.totTime(ind));
-    test{1}.realTime = t.realTime{ind};
+    %test{1}.realTime = t.realTime{ind};
     test{1}.interval = t.interval(ind);
 
     for i=1:t.nbInput(1)
@@ -35,7 +35,7 @@ if(percent==1)%want only one test
             train.y{i} =  t.y{i};
             train.yMat{i} = t.yMat{i};
             train.totTime(i) = t.totTime(i);
-            train.realTime{i} = t.realTime{i};
+%            train.realTime{i} = t.realTime{i};
             train.interval(i) = t.interval(i);
     end
     for i=ind+1:t.nbTraj
@@ -43,7 +43,7 @@ if(percent==1)%want only one test
             train.y{i-1} =  t.y{i};
             train.yMat{i-1} = t.yMat{i};
             train.totTime(i-1) = t.totTime(i);
-            train.realTime{i-1} = t.realTime{i};
+           % train.realTime{i-1} = t.realTime{i};
             train.interval(i-1) = t.interval(i);
     end
     
@@ -68,7 +68,7 @@ else
         test{i}.yMat = t.yMat{ind};
         test{i}.totTime = t.totTime(ind);
         test{i}.alpha = t.alpha(ind);
-        test{i}.realTime = t.realTime(ind);
+ %       test{i}.realTime = t.realTime(ind);
         test{i}.nbData = ceil((percentData/100)*t.totTime(ind));
         test{i}.interval = t.interval(ind);
 
@@ -85,7 +85,7 @@ else
             train.totTime(cpt) = t.totTime(i);
             train.alpha(cpt) = t.alpha(i);
             train.interval(cpt) = t.interval(i);
-            train.realTime(cpt) = t.realTime(i);
+        %    train.realTime(cpt) = t.realTime(i);
             cpt = cpt+1;
         end
     end

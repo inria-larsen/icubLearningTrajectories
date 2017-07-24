@@ -39,11 +39,11 @@ connection.port3.open('/matlab/skin');
 disp('Going to open port /matlab/wrenches');
 connection.port4.open('/matlab/wrenches');
 disp('Going to open port /matlab/state');
-connection.portGrasp.open('/matlab/state');
+connection.port5.open('/matlab/state');
 disp('Going to open port /matlab/grasp:o');
 connection.portGrasp.open('/matlab/grasp:o');
 disp('Going to open port /matlab/IG:o');
-connection.portGrasp.open('/matlab/IG:o');
+connection.portIG.open('/matlab/IG:o');
 
 
 rep = input('Please connect to a bottle sink (e.g. yarp read/write) and press a button.\n');

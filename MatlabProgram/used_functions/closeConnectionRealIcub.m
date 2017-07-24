@@ -9,6 +9,5 @@ connection.port3.close;
 connection.port4.close;
 connection.port5.close;
 connection.portGrasp.close;
-
 connection.portIG.close;
 end

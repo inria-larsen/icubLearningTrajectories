@@ -1,4 +1,4 @@
-function [test] = beginATrajectoryWithRealIcub(connection)
+function [test] = beginATrajectoryWithRealIcub(connexion)
 
 
     ok=0;
@@ -14,28 +14,29 @@ function [test] = beginATrajectoryWithRealIcub(connection)
     t=1
     while(ok==1)  
         
-        disp('on est dans la boucle');
+   %     disp('on est dans la boucle');
         %modify this part: should retrieve information
-        connection.wrenches.clear(); 
-        connection.port4.read(connection.wrenches); 
-        disp('We have received wrenches'); 
-        disp(connection.wrenches); 
-        num2 = str2num(connection.wrenches);   
-        connection.state.clear(); 
-        connection.port5.read(connection.state); 
-        disp('We have received cartesian state'); 
-        disp(connection.state); 
-        num3 = str2num(connection.wrenches);   
+%         connexion.wrenches.clear(); 
+%         connexion.port4.read(connexion.wrenches); 
+%         disp('We have received wrenches'); 
+%         disp(connexion.wrenches); 
+%         num2 = str2num(connexion.wrenches);   
+        connexion.state.clear(); 
+        connexion.port5.read(connexion.state); 
+        %disp('We have received cartesian state'); 
+        %disp(connexion.state); 
+        num3 = str2num(connexion.state);   
         
-        num(t,:) = [num3(1:3)'; num2'];
+        num(t,:) = [num3(1:7)'];%; num2'];
         t=t+1;
                 
         %verify contact
         skinContact;
     end
-    y_trial_nbData = [num(:,1) ; num(:,2) ; num(:,3) ; num(:,4) ; num(:,5);num(:,6);num(:,7);num(:,8);num(:,9)]; 
+    disp('End of the early-observations');
+    y_trial_nbData = [num(:,1) ; num(:,2) ; num(:,3) ; num(:,4) ; num(:,5);num(:,6);num(:,7)];%;num(:,8);num(:,9)]; 
     test.y = y_trial_nbData;
-    test.partialTraj = [num(:,1) ; num(:,2) ; num(:,3) ];
-    test.yMat = [num(:,1) , num(:,2) , num(:,3) , num(:,4) , num(:,5),num(:,6),num(:,7),num(:,8),num(:,9)] ;
+    test.partialTraj = y_trial_nbData;% [num(:,1) ; num(:,2) ; num(:,3) ];
+    test.yMat = [num(:,1) , num(:,2) , num(:,3) , num(:,4) , num(:,5),num(:,6),num(:,7)];%,num(:,8),num(:,9)] ;
     test.nbData = size(test.yMat,1);
 end

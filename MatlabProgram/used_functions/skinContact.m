@@ -1,23 +1,18 @@
 ok=0;
-connection.skin.clear();
-connection.port3.read(connection.skin); 
+connexion.skin.clear();
+connexion.port3.read(connexion.skin); 
 
-dataR = connection.skin.toString()
+dataR = connexion.skin.toString();
 if(dataR.length >0)
     dataTMP = dataR.split('\)');
     data2 = dataTMP(1).split(' ');
     if(str2num(char(data2(2))) == 3)
-        valuePression= dataTMP(length(dataTMP))
-        valuePression = str2num(valuePression);
-        if(valuePression > 20.0)
-            display('The contact is perceived');
+        valuePression= str2num(dataTMP(length(dataTMP)));
+        
+        if(valuePression > 15.0)
             ok =1;
-        else
-            display('arm contact to weak');
         end
-    else
-        display('no contact on the arm');
     end
-else
-    display('No contact');
+%else
+    %display('No contact');
 end

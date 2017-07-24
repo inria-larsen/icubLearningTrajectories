@@ -13,10 +13,10 @@ addpath('used_functions'); %add some fonctions we use.
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
 inputName = {'x[m]','y[m]','z[m]', 'a1[°]','a2[°]','a3[°]', 'a4[°]'};
 s_bar=100;
-nbInput = [3 4];%9 %number of input used during the inference (here cartesian position)
+nbInput = 7%[3 4];%9 %number of input used during the inference (here cartesian position)
 
 M(1) = 5; %number of basis functions for the first type of input
-M(2) = 5; %number of basis functions for the first type of input
+%M(2) = 5; %number of basis functions for the first type of input
 
 %variable tuned to achieve the trajectory correctly. It is the co
 expNoise = 0.00001;
@@ -36,7 +36,7 @@ end
 
 
 %retrieve trajectories done with the real iCub
-load('Data/icub_frontiers.mat');
+load('Data/icub_frontiersWithMatlab.mat');
 for i=1:length(t)
 t{i}.nbInput = nbInput;
 end
