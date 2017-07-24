@@ -19,9 +19,10 @@ bool CartesianClient::init(const string &robot,const string & part,bool swap_x, 
     option.put("remote","/"+robot+"/cartesianController/"+part);
     option.put("local","/cartesian_client/"+part);
 
+	cout << "before open client" << endl;
     if (!client.open(option))
         return false;
-
+	cout << "before view" << endl;
     client.view(icart);
     icart->storeContext(&startup_context_id);
     // get the torso dofs
