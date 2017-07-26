@@ -1,13 +1,18 @@
-function closeConnectionRealIcub(connection)
-%closeConnection closes the C++ program "replay" and close its port.
-connection.b.clear();
-connection.b.addDouble(-1);    
-connection.port.write(connection.b);
-connection.port.close;
-connection.port2.close;
-connection.port3.close;
-connection.port4.close;
-connection.port5.close;
-connection.portGrasp.close;
-connection.portIG.close;
+function closeConnectionRealIcub(connexion)
+%closeconnexion closes the C++ program "replay" and close its port.
+connexion.b.clear();
+connexion.b.addDouble(-1);    
+connexion.port.write(connexion.b);
+connexion.port.close;
+%connexion.port2.close;
+connexion.portSkin.close;
+%connexion.port4.close;
+connexion.portState.close;
+% connexion.portGrasp.close;
+
+
+connexion.b.clear();
+connexion.b.addString('reset');
+connexion.portIG.write(connexion.b);
+connexion.portIG.close;
 end

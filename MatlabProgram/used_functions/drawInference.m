@@ -28,8 +28,11 @@ nameFig = figure;
 
 if(isInterval==1)
     cpt=0;
-    i = infTraj.reco;%reco{1};
+    i = infTraj.reco%reco{1};
     prior = infTraj.PHI*promp{i}.mu_w;
+    otherPrior = infTraj.PHI*promp{(1 - i)}.mu_w;
+        varOtherPrior = infTraj.PHI*1.96*sqrt(diag(promp{(1-i)}.sigma_w ));
+
     varPrior = infTraj.PHI*1.96*sqrt(diag(promp{i}.sigma_w ));
     posterior = infTraj.PHI*infTraj.mu_w;
     varPosterior = infTraj.PHI*1.96*sqrt(diag(infTraj.sigma_w));
@@ -41,6 +44,13 @@ if(isInterval==1)
         RTInf = infTraj.timeInf*0.01;
         intervalInf = RTInf / infTraj.timeInf;
         visualisationShared(prior, varPrior, sum(nbInput), infTraj.timeInf,  vff, 'b', nameFig, 'vecX',[intervalInf:intervalInf:RTInf]);
+        
+        
+        visualisationShared(otherPrior, varOtherPrior, sum(nbInput), infTraj.timeInf,  vff, 'b', nameFig, 'vecX',[intervalInf:intervalInf:RTInf]);
+        nameFig = visualisation(otherPrior, sum(nbInput), infTraj.timeInf, vff, 'g', nameFig,[intervalInf:intervalInf:RTInf]);
+        otherP = size(nameFig,2);
+
+        
         nameFig = visualisation(prior, sum(nbInput), infTraj.timeInf, vff, 'b', nameFig,[intervalInf:intervalInf:RTInf]);
         prevG = size(nameFig,2);
         visualisationShared(posterior, varPosterior, sum(nbInput), infTraj.timeInf,  vff,'r', nameFig,'vecX', [intervalInf:intervalInf:RTInf]);
@@ -67,7 +77,7 @@ if(isInterval==1)
         end
         set(gca, 'fontsize', 20)
     end
-            legend(nameFig(1,[dtG, dnG, prevG, newG]),'real trajectory', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
+            legend(nameFig(1,[dtG,otherP, dnG, prevG, newG]),'real trajectory', 'other prior', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
 
 else
     for vff=1:nbInput(1)
@@ -79,15 +89,22 @@ else
         end
         RTInf = infTraj.timeInf*0.01;
         intervalInf = RTInf / infTraj.timeInf;
-        i = infTraj.reco;%reco{1};
+        i = infTraj.reco%reco{1};
         visualisationShared(infTraj.PHI*promp{i}.mu_w, infTraj.PHI*1.96*sqrt(diag(promp{i}.sigma_w )), sum(nbInput), infTraj.timeInf,  vff, 'b', nameFig, 'vecX',[intervalInf:intervalInf:RTInf]);
         nameFig = visualisation(infTraj.PHI*promp{i}.mu_w, sum(nbInput), infTraj.timeInf, vff, 'b', nameFig,[intervalInf:intervalInf:RTInf]);
         prevG = size(nameFig,2);
         visualisationShared(infTraj.PHI*infTraj.mu_w, infTraj.PHI*1.96*sqrt(diag(infTraj.sigma_w)), sum(nbInput), infTraj.timeInf,  vff,'r', nameFig,'vecX', [intervalInf:intervalInf:RTInf]);
-
-
         nameFig = visualisation(infTraj.PHI*infTraj.mu_w, sum(nbInput), infTraj.timeInf, vff, 'r', nameFig,[intervalInf:intervalInf:RTInf]);
         newG = size(nameFig,2);
+        varOtherPrior = infTraj.PHI*1.96*sqrt(diag(promp{(3-i)}.sigma_w ));
+
+        otherPrior = infTraj.PHI*promp{(3 - i)}.mu_w;
+        visualisationShared(otherPrior, varOtherPrior, sum(nbInput), infTraj.timeInf,  vff, 'g', nameFig, 'vecX',[intervalInf:intervalInf:RTInf]);
+        nameFig = visualisation(otherPrior, sum(nbInput), infTraj.timeInf, vff, 'g', nameFig,[intervalInf:intervalInf:RTInf]);
+        otherP = size(nameFig,2);
+
+        
+        
         if(isfield(test, 'interval'))
             if(isfield(test, 'realTime'))
                 nameFig(size(nameFig,2) + 1) = plot( [interval:interval: test.realTime(test.totTime)],test.yMat(:,vff), ':k', 'linewidth', 2);
@@ -111,9 +128,9 @@ else
              set(gca, 'fontsize', 20)
     end
     if(exist('dtG'))
-        legend(nameFig(1,[dtG, dnG, prevG, newG]),'real trajectory', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
+            legend(nameFig(1,[dtG,otherP, dnG, prevG, newG]),'real trajectory', 'other prior', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
     else
-        legend(nameFig(1,[dnG, prevG, newG]), 'observations','prior proMP', 'prediction', 'Location', 'southeast');
+            legend(nameFig(1,[otherP, dnG, prevG, newG]), 'other prior', 'observations','prior proMP', 'prediction', 'Location', 'southeast');
     end
 end
 

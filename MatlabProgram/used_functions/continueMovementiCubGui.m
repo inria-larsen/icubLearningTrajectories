@@ -37,7 +37,7 @@ for t = 1: nbData%:inf.timeInf %round(inf.alpha*nbData): inf.timeInf
     connection.b.addDouble(1);
    display(['Write on iCubGui: object', name, '30 30 30 ', num2str(val(t,1)*1000), ' ', num2str(val(t,2)*1000), ' ', num2str(val(t,3)*1000), ' 0 0 0 255 0 0 1 ']);
     connection.portIG.write(connection.b);
-   a = input('continue');
+  % a = input('continue');
 end
 
 for t = nbData:inf.timeInf %round(inf.alpha*nbData): inf.timeInf
@@ -67,11 +67,11 @@ for t = nbData:inf.timeInf %round(inf.alpha*nbData): inf.timeInf
     connection.b.addDouble(1);
    display(['Write on iCubGui: object', name, '30 30 30 ', num2str(val(t,1)*1000), ' ', num2str(val(t,2)*1000), ' ', num2str(val(t,3)*1000), ' 0 0 0 255 0 0 1 ']);
     connection.portIG.write(connection.b);
-   a = input('continue');
 end
 
+%a = input('press enter to delete the trajectory');
 
-% 
+
 % for t = round(inf.alpha*nbData):10: inf.timeInf
 %     connection.b.clear();
 %     
@@ -101,7 +101,9 @@ end
 %    %display(['Write on iCubGui: object', name, '30 30 30 ', num2str(val(t,1)*1000), ' ', num2str(val(t,2)*1000), ' ', num2str(val(t,3)*1000), ' 0 0 0 0 255 0 1 ']);
 %     connection.portIG.write(connection.b);
 %   % a = input('continue');
-% end
+%end
+
+
 
 
 end

@@ -32,17 +32,17 @@ for i=1:size(M,2)
 end
 
 connexion = initializeConnectionRealIcub    
-
-% closeEndOrder = 'left close_hand';
-% connexion.grasp.clear();
-% connexion.grasp.fromString(closeEndOrder);
-% connexion.portGrasp.write(connexion.grasp);
-% a = input('Press enter when the robot has closed its hand');
-
+%%
+%  closeEndOrder = 'left close_hand';
+%  connexion.grasp.clear();
+%  connexion.grasp.fromString(closeEndOrder);
+%  connexion.portGrasp.write(connexion.grasp);
+%  a = input('Press enter when the robot has closed its hand');
+ %connexion.portGrasp.close;
 %retrieve trajectories done with the real iCub
 load('Data/icub_frontiersWithMatlab.mat');
 for i=1:length(t)
-t{i}.nbInput = nbInput;
+    t{i}.nbInput = nbInput;
 end
 
 % 
@@ -54,40 +54,51 @@ end
 %Compute the distribution for each kind of trajectories.
 promp{1} = computeDistribution(t{1}, M, s_bar,c,h);
 promp{2} = computeDistribution(t{2}, M, s_bar,c,h);
-%%
-cont=1;
-while( cont==1)
-    
-    test{1} = beginATrajectoryWithRealIcub(connexion);
 
+%cont=1;
+%while( cont==1)
+%%     
+    test{1} = beginATrajectoryWithRealIcub(connexion);
+    connexion.portSkin.close;
+    connexion.portState.close;
+    
     w = computeAlpha(test{1}.nbData,t, nbInput);
     promp{1}.w_alpha= w{1};
     promp{2}.w_alpha= w{2};
     %Recognition of the movement
     [alphaTraj,type, x] = inferenceAlpha(promp,test{1},M,s_bar,c,h,test{1}.nbData, expNoise, 'MO');
     recoPromp{1} =promp{type}; % we keep only the inferred ProMP
-    [infTraj,typeReco] = inference(recoPromp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj, connexion);
-    
+    [infTraj,typeReco] = inference(promp, test{1}, M, s_bar, c, h, test{1}.nbData, expNoise, alphaTraj, connexion);
+
+    recoPromp{1}
+    typeReco
     %to ask icub to say the label of the recognize trajectory
     %sayType(promp{typeReco}.traj.label, connexion);
     drawInference(promp,inputName,infTraj, test{1},s_bar)
 
     continueMovementiCubGui(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     %replay the movement into gazebo
-    a = input('1 when ready');
-    while(a~=1)
-        a = input('1 when ready');
+    %connexion.portIG.close;
+        
+    a = input('press "y" if you want to replay on icub or "n" ');
+    while(strcmp(a, 'y')==0)
+        a = input(' press "y" when ready'); 
+        if(strcmp(a, 'n') ==1)
+            break;
+        end
     end
     
-    continueMovement(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     
-    %closeEndOrder = 'left open_hand';
-    %connexion.grasp.clear();
-    %connexion.grasp.fromString(closeEndOrder);
-    %connexion.portGrasp.write(connexion.grasp);
-
-    cont = input('Do you want to infer again? (yes=1, no=0)');
-end
+    if(strcmp(a,'y') ==1)
+        continueMovement(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
+    end
+%     pause(3);
+%      closeEndOrder = 'left open_hand';
+%      connexion.grasp.clear();
+%      connexion.grasp.fromString(closeEndOrder);
+%      connexion.portGrasp.write(connexion.grasp);
+    %cont = input('Do you want to infer again? (yes=1, no=0)');
+%end
 
 %close the port and the program replay.
 closeConnectionRealIcub(connexion);

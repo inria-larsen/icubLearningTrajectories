@@ -24,7 +24,7 @@ for t = nbData:inf.timeInf
     display('In for');
 %for t = round(inf.alpha*nbData): z
     connection.b.clear();
-    for i = 1 : 3 %cartesian position information
+    for i = 1 : 6 %cartesian position information
         connection.b.addDouble(val(t,i));
     end
     
@@ -35,8 +35,8 @@ for t = nbData:inf.timeInf
     display(['Sending ', num2str(val(t,1)), ' ' , num2str(val(t,2)), ' etc. Waiting answer']);
     connection.port.read(connection.c);
     num = str2num(connection.c);
-   disp(['Receiving: forces = ', num2str(num(1,1)), ' ',num2str(num(1,2)),' ', num2str(num(1,3))]);
-    disp(['Expected:  forces = ', num2str(data(z*(4-1)+t)),' ', num2str(data(z*(5-1)+t)),' ', num2str(data(z*(6 -1)+t))]);
+   %disp(['Receiving: forces = ', num2str(num(1,1)), ' ',num2str(num(1,2)),' ', num2str(num(1,3))]);
+   % disp(['Expected:  forces = ', num2str(data(z*(4-1)+t)),' ', num2str(data(z*(5-1)+t)),' ', num2str(data(z*(6 -1)+t))]);
     
 %    disp(['Receiving: wrenches = ', num2str(num(1,4)), ' ',num2str(num(1,5)), ' ',num2str(num(1,6))]);
 %    disp(['Expected:  wrenches = ', num2str(data(z*(7-1)+t)),' ', num2str(data(z*(8-1)+t)), ' ',num2str(data(z*(9 -1)+t))]);
