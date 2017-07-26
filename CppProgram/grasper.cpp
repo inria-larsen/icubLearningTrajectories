@@ -134,7 +134,7 @@ right green_ball
 \section tested_os_sec Tested OS
 Linux
 
-\author Serena Ivaldi
+\author Based on the grasper.cpp of Serena Ivaldi, modified by Oriane Dermy
 */
 
 #include <yarp/sig/Vector.h>
