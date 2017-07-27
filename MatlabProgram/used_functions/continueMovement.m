@@ -3,7 +3,7 @@ function continueMovement(inf,connection,nbData,z, PHI_norm, varargin)
 
 
 data =inf.PHI*inf.mu_w;%PHI_norm*inf.mu_w; %inf.PHI*inf.mu_w; %PHI_norm*inf.mu_w;
-for i=1:3
+for i=1:7
     for j=1:inf.timeInf
         val(j,i) = data(inf.timeInf*(i-1)+j);
     end
@@ -24,7 +24,7 @@ for t = nbData:inf.timeInf
     display('In for');
 %for t = round(inf.alpha*nbData): z
     connection.b.clear();
-    for i = 1 : 6 %cartesian position information
+    for i = 1 : 7 %cartesian position information
         connection.b.addDouble(val(t,i));
     end
     

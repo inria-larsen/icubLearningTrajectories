@@ -95,9 +95,9 @@ public:
 
         // enable the torso yaw and pitch
         // disable the torso roll
-        newDof[0]=1;
-        newDof[1]=1;
-        newDof[2]=1;
+        newDof[0]=0;
+        newDof[1]=0;
+        newDof[2]=0;
         
         // send the request for dofs reconfiguration
         icart->setDOF(newDof,curDof);
@@ -244,9 +244,14 @@ public:
 	            for (int i=0; i<3; i++) 
 	            {
 	                xd[i] = input->get(i).asDouble(); // position ordered by matlab	
-				checkSafety();
 	            
 	            }
+	            for (int i=0; i<4; i++) 
+	            {
+	                od[i] = input->get(i+4).asDouble(); // orientation ordered by matlab	
+	            
+	            }
+
 	            //compliance = input->get(3).asDouble(); // compliance ordered by matlab 
 			}
 		}
