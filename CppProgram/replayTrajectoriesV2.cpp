@@ -150,9 +150,16 @@ public:
         // go to the target :)
         // (in streaming)
         cout << "Go to pose" << xd[0] << " " << xd[1] << " " << xd[2] << endl; 
-        icart->goToPose(xd,od);
-
-
+        
+        
+        Vector xdhat, odhat, qdhat;
+		bool possible = icart->askForPose(xd,od, xdhat,odhat,qdhat);
+        if(possible)
+        
+		{   
+			icart->goToPoseSync(xdhat,odhat);
+			icart->waitMotionDone(0.04);  // wait until the motion is done and ping at each 0.04 seconds
+		}
 	    //Give to matlab forces information
             Bottle& output = port.prepare();
             output.clear();
