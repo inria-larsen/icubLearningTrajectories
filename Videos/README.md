@@ -8,3 +8,5 @@ In this video, we teach the probabilistic lifting primitive to our simulated rob
 When the user releases the button, the robot continues the movement on its own with the predicted trajectory.
 
 This video shows the inference ability of the robot in the offline simulation, with plot representations of the results: https://youtu.be/NR78BB0f4Ss
+
+Finally, the following video shows the experiment on the real iCub with real physical interaction: https://www.youtube.com/watch?v=bLiZSZBMEDA&feature=youtu.be
