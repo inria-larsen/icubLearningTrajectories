@@ -92,8 +92,7 @@ promp{2} = computeDistribution(t{2}, M, s_bar,c,h);
     if(strcmp(a,'y') ==1)
         continueMovement(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     end
-    pause(3);
- %%   
+    pause(3);  
      connexion.portGrasp.open('/matlab/grasp:o');
      system('yarp connect /matlab/grasp:o /grasper/rpc:i');
      closeEndOrder = 'left open_hand';
