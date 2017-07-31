@@ -11,7 +11,7 @@ for t = 1 : newTraj.nbData
      end
     connection.port.write(connection.b);
     connection.port.read(connection.c);
-    disp(connection.c);
+   % disp(connection.c);
     num = str2num(connection.c);
     disp(['Receiving: f =', num2str(num(1,1)), ' ', num2str(num(1,2)),' ', num2str(num(1,3)), 'm=', num2str(num(1,4)), ' ',num2str(num(1,5)), ' ',num2str(num(1,6)) ]);
 end

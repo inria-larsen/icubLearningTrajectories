@@ -11,11 +11,10 @@ function PHI = computeBasisFunction(s_ref,M, nbInput, alpha, totalTime, c, h, nb
 % h: bandwith of the RBF
 % nbData: normally = totalTime. But if you want a subpart of the matrix,
 % you can specify this number.
-
 	for k=1:size(M,2)
-	    for i = 1 : M(k) 
+        for i = 1 : M(k)
 	        center(k,i) = c(k)*(i-1); 
-	    end
+        end
 	
 	    for t=1:totalTime
 	        %creating a basis functions model (time*nbFunctions)
@@ -23,15 +22,16 @@ function PHI = computeBasisFunction(s_ref,M, nbInput, alpha, totalTime, c, h, nb
 	            val{k} = -(alpha*t*(1/s_ref)-center(k,i))*(alpha*t*(1/s_ref)-center(k,i))/(h(k));
 	            basis{k}(t,i) = exp(val{k});
             end
-
+            
             %normalization of the RBF
 	        sumBI = sum(basis{k}(t,:));
-	        for i = 1 : M(k)
+	            phi{k}(t,1) = basis{k}(t,1) / sumBI ;
+            for i = 1 : M(k)
 	            phi{k}(t,i) = basis{k}(t,i) / sumBI;
-	        end
+            end
 	    end
 	end
-	
+
 	%IF we want the RBF as a matrix matrix    
 	if((~isempty(varargin)) && (strcmp(varargin{1},'Mat')))
 	    display('matrix!!')
