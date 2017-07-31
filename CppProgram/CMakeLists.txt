@@ -25,8 +25,8 @@ target_link_libraries(recordTrajectoriesWithGeomagic ${YARP_LIBRARIES} pthread)
 add_executable(sendForces sendForces.cpp)
 target_link_libraries(sendForces ${YARP_LIBRARIES} pthread)
 
-#add_executable(replayTrajectories replayTrajectories.cpp cartesianClient.cpp)
-#target_link_libraries(replayTrajectories ${YARP_LIBRARIES} pthread)
+add_executable(replayTrajectories replayTrajectories.cpp cartesianClient.cpp)
+target_link_libraries(replayTrajectories ${YARP_LIBRARIES} pthread)
 
 
 add_executable(replayTrajectoriesWithGeom replayTrajectoriesWithGeom.cpp cartesianClient.cpp)
@@ -35,12 +35,12 @@ target_link_libraries(replayTrajectoriesWithGeom ${YARP_LIBRARIES} pthread)
 add_executable(grasper grasper.cpp)
 target_link_libraries(grasper ${YARP_LIBRARIES})
 
-add_executable(replayTrajectories replayTrajectoriesV2.cpp)
-target_link_libraries(replayTrajectories ${YARP_LIBRARIES})
+add_executable(replayWithIcub replayTrajectoriesWithIcub.cpp)
+target_link_libraries(replayWithIcub ${YARP_LIBRARIES})
 
 install(TARGETS sendForces DESTINATION bin)
 install(TARGETS recordTrajectoriesWithGeomagic DESTINATION bin)
-install(TARGETS replayTrajectories DESTINATION bin)
+install(TARGETS replayWithIcub DESTINATION bin)
 install(TARGETS replayTrajectoriesWithGeom DESTINATION bin)
 install(TARGETS grasper DESTINATION bin)
 
