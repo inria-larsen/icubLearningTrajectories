@@ -30,8 +30,8 @@ if(isInterval==1)
     cpt=0;
     i = infTraj.reco%reco{1};
     prior = infTraj.PHI*promp{i}.mu_w;
-    otherPrior = infTraj.PHI*promp{(1 - i)}.mu_w;
-        varOtherPrior = infTraj.PHI*1.96*sqrt(diag(promp{(1-i)}.sigma_w ));
+    otherPrior = infTraj.PHI*promp{(3 - i)}.mu_w;
+    varOtherPrior = infTraj.PHI*1.96*sqrt(diag(promp{(3-i)}.sigma_w ));
 
     varPrior = infTraj.PHI*1.96*sqrt(diag(promp{i}.sigma_w ));
     posterior = infTraj.PHI*infTraj.mu_w;
