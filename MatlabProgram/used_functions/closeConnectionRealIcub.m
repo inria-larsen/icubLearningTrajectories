@@ -8,7 +8,7 @@ connexion.port.close;
 connexion.portSkin.close;
 %connexion.port4.close;
 connexion.portState.close;
-% connexion.portGrasp.close;
+connexion.portGrasp.close;
 
 
 connexion.b.clear();

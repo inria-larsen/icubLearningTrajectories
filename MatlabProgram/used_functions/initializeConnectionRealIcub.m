@@ -23,8 +23,8 @@ connexion.portSkin.close;
 connexion.portState=Port;
 connexion.portState.close;
 
-%  connexion.portGrasp=Port;
-%  connexion.portGrasp.close;
+ connexion.portGrasp=Port;
+ connexion.portGrasp.close;
 
 
 connexion.portIG=Port;
@@ -40,8 +40,8 @@ connexion.portSkin.open('/matlab/skin');
 %connexion.port4.open('/matlab/wrenches');
 disp('Going to open port /matlab/state');
 connexion.portState.open('/matlab/state');
-%  disp('Going to open port /matlab/grasp:o');
-%  connexion.portGrasp.open('/matlab/grasp:o');
+disp('Going to open port /matlab/grasp:o');
+connexion.portGrasp.open('/matlab/grasp:o');
 disp('Going to open port /matlab/IG:o');
 connexion.portIG.open('/matlab/IG:o');
 
@@ -53,7 +53,7 @@ connexion.c = Bottle;
 connexion.skin = Bottle;
 %connexion.wrenches = Bottle;
  connexion.state = Bottle;
-%  connexion.grasp = Bottle;
-%  connexion.graspAns =Bottle;
+ connexion.grasp = Bottle;
+ connexion.graspAns =Bottle;
 
 end

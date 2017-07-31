@@ -10,7 +10,7 @@ addpath('used_functions');
 warning('off','MATLAB:colon:nonIntegerIndex')
 
 %%%%%%%%%%%%%%%VARIABLES, please refer you to the readme
-inputName = {'x[m]','y[m]','z[m]', 'a1[°]','a2[°]','a3[°]', 'a4[°]'};
+inputName = {'x[m]','y[m]','z[m]', 'a_1','a_2','a_3', 'a_4'};
 s_bar=100;
 nbInput = 7%[3 4];%9 %number of input used during the inference (here cartesian position)
 
@@ -33,12 +33,12 @@ end
 
 connexion = initializeConnectionRealIcub    
 %%
-%  closeEndOrder = 'left close_hand';
-%  connexion.grasp.clear();
-%  connexion.grasp.fromString(closeEndOrder);
-%  connexion.portGrasp.write(connexion.grasp);
-%  a = input('Press enter when the robot has closed its hand');
- %connexion.portGrasp.close;
+ closeEndOrder = 'left close_hand';
+ connexion.grasp.clear();
+ connexion.grasp.fromString(closeEndOrder);
+ connexion.portGrasp.write(connexion.grasp);
+ a = input('Press enter when the robot has closed its hand');
+ connexion.portGrasp.close;
 %retrieve trajectories done with the real iCub
 load('Data/icub_frontiersWithMatlab.mat');
 for i=1:length(t)
@@ -92,11 +92,14 @@ promp{2} = computeDistribution(t{2}, M, s_bar,c,h);
     if(strcmp(a,'y') ==1)
         continueMovement(infTraj,connexion, test{1}.nbData,s_bar, promp{type}.PHI_norm,inputName);
     end
-%     pause(3);
-%      closeEndOrder = 'left open_hand';
-%      connexion.grasp.clear();
-%      connexion.grasp.fromString(closeEndOrder);
-%      connexion.portGrasp.write(connexion.grasp);
+    pause(3);
+ %%   
+     connexion.portGrasp.open('/matlab/grasp:o');
+     system('yarp connect /matlab/grasp:o /grasper/rpc:i');
+     closeEndOrder = 'left open_hand';
+     connexion.grasp.clear();
+     connexion.grasp.fromString(closeEndOrder);
+     connexion.portGrasp.write(connexion.grasp);
     %cont = input('Do you want to infer again? (yes=1, no=0)');
 %end
 
