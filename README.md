@@ -30,7 +30,7 @@ gazebo
 WholeBodyDynamicsTree  
 The Geomagic Touch software (see here: https://github.com/inria-larsen/icub-manual/wiki/Installation-with-the-Geomagic-Touch)
 
-A tutorial that explains how to install these modules is available at: https://github.com/inria-larsen/icub-manual/wiki/How-to-install-the-software-on-your-machine-(Ubuntu-14)
+A tutorial that explains how to install these modules is available at: https://github.com/inria-larsen/icub-manual/wiki/How-to-install-the-software-on-your-machine-(Ubuntu-16)
 Note that wholeBodyDynamicsTree is currently included in the codyco-superbuild project.
 
 
