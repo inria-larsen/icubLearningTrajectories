@@ -21,7 +21,7 @@ In this README, "$YourPath" refers to the path where this software has been clon
 
 ## PRE-INSTALLATION and requirement:
 
-This toolbox has been created on Ubuntu 14 with the iCubGazeboSim.  
+This toolbox is tested on Ubuntu 16 with the iCubSim.  
 
 You need to have installed:  
 icub-main  
